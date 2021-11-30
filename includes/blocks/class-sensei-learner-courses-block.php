@@ -30,7 +30,7 @@ class Sensei_Learner_Courses_Block {
 	}
 
 	/**
-	 * Renders learner courses block in the frontend.
+	 * Renders student courses block in the frontend.
 	 *
 	 * @param array  $attributes The block attributes.
 	 * @param string $content    The inner block content.

@@ -18,7 +18,7 @@ class Sensei_Unsupported_Theme_Handler_Learner_Profile_Test extends WP_UnitTestC
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
 
-		$this->setupLearnerProfilePage();
+		$this->setupStudentProfilePage();
 
 		Sensei_Unsupported_Theme_Handler_Page_Imitator_Test::create_page_template();
 
@@ -138,7 +138,7 @@ class Sensei_Unsupported_Theme_Handler_Learner_Profile_Test extends WP_UnitTestC
 	 *
 	 * @since 1.12.0
 	 */
-	private function setupLearnerProfilePage() {
+	private function setupStudentProfilePage() {
 		global $post, $wp_query, $wp_the_query;
 
 		$this->learner_user = $this->factory->user->create_and_get();

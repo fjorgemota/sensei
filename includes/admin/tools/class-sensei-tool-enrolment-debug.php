@@ -49,7 +49,7 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 	 * @return string
 	 */
 	public function get_description() {
-		return __( 'Check what the enrollment status is between a course and learner.', 'sensei-lms' );
+		return __( 'Check what the enrollment status is between a course and student.', 'sensei-lms' );
 	}
 
 	/**
@@ -390,7 +390,7 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 	/**
 	 * Add debug button to row.
 	 *
-	 * @param array $row_data  Row data for learner management.
+	 * @param array $row_data  Row data for student management.
 	 * @param array $item      Activity information for row.
 	 * @param int   $course_id Course post ID.
 	 *
@@ -398,7 +398,7 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 	 */
 	public static function add_debug_action( $row_data, $item, $course_id = null ) {
 		/**
-		 * Show the enrolment debug button on learner management.
+		 * Show the enrolment debug button on student management.
 		 *
 		 * @since 3.7.0
 		 * @hook sensei_show_enrolment_debug_button

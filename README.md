@@ -13,7 +13,7 @@ version, but serves as a model for future changes.
   * Settings
 * Users
   * Teachers
-  * Learners
+  * Students
   * Messages
   * Emails
 * Content

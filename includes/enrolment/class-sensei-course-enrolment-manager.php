@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Course_Enrolment_Manager {
 	const COURSE_ENROLMENT_SITE_SALT_OPTION = 'sensei_course_enrolment_site_salt';
-	const LEARNER_CALCULATION_META_NAME     = 'sensei_learner_calculated_version';
+	const STUDENT_CALCULATION_META_NAME     = 'sensei_learner_calculated_version';
 
 	/**
 	 * Update this when releasing a version that requires user enrolment to get checked.
@@ -468,14 +468,14 @@ class Sensei_Course_Enrolment_Manager {
 	}
 
 	/**
-	 * Get the learner calculated meta key.
+	 * Get the student calculated meta key.
 	 *
 	 * @return string
 	 */
 	public static function get_learner_calculated_version_meta_key() {
 		global $wpdb;
 
-		return $wpdb->get_blog_prefix() . self::LEARNER_CALCULATION_META_NAME;
+		return $wpdb->get_blog_prefix() . self::STUDENT_CALCULATION_META_NAME;
 	}
 
 	/**
@@ -512,7 +512,7 @@ class Sensei_Course_Enrolment_Manager {
 			return;
 		}
 
-		$message = __( '<strong>Sensei LMS</strong> has detected an incompatible version of WooCommerce Paid Courses. Learners will not be able to access their courses until it is upgraded to version 2.0.0 or greater.', 'sensei-lms' );
+		$message = __( '<strong>Sensei LMS</strong> has detected an incompatible version of WooCommerce Paid Courses. Students will not be able to access their courses until it is upgraded to version 2.0.0 or greater.', 'sensei-lms' );
 
 		echo '<div class="error"><p>';
 		echo wp_kses( $message, [ 'strong' => [] ] );

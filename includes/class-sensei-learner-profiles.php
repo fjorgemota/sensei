@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * All functionality pertaining to the learner profiles in Sensei.
+ * All functionality pertaining to the student profiles in Sensei.
  *
  * @package Views
  * @author Automattic
@@ -24,17 +24,17 @@ class Sensei_Learner_Profiles {
 	 */
 	public function __construct() {
 
-		// Setup learner profile URL base
-		$this->profile_url_base = apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'sensei-lms' ) );
+		// Setup learner student URL base
+		$this->profile_url_base = apply_filters( 'sensei_learner_profiles_url_base', __( 'student', 'sensei-lms' ) );
 
-		// Setup permalink structure for learner profiles
+		// Setup permalink structure for student profiles
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
 		add_filter( 'wp_title', array( $this, 'page_title' ), 10, 2 );
 
 		// Scripts for frontend.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
-		// Set heading for courses section of learner profiles
+		// Set heading for courses section of student profiles
 		add_action( 'sensei_learner_profile_info', array( $this, 'learner_profile_courses_heading' ), 30, 1 );
 
 		// Add class to body tag
@@ -58,7 +58,7 @@ class Sensei_Learner_Profiles {
 	}
 
 	/**
-	 * Setup permalink structure for learner profiles
+	 * Setup permalink structure for student profiles
 	 *
 	 * @since  1.4.0
 	 * @return void
@@ -92,18 +92,18 @@ class Sensei_Learner_Profiles {
 
 			$name = Sensei_Learner::get_full_name( $learner_user->ID );
 
-			// translators: Placeholder is the full name of the learner.
+			// translators: Placeholder is the full name of the student.
 			$title = apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'sensei-lms' ), $name ) ) . ' ' . $sep . ' ';
 		}
 		return $title;
 	}
 
 	/**
-	 * Get permalink for learner profile
+	 * Get permalink for student profile
 	 *
 	 * @since  1.4.0
 	 * @param  integer $user_id ID of user
-	 * @return string           The learner profile permalink
+	 * @return string           The student profile permalink
 	 */
 	public function get_permalink( $user_id = 0 ) {
 		$user = false;
@@ -126,7 +126,7 @@ class Sensei_Learner_Profiles {
 		}
 
 		/**
-		 * This allows filtering of the Learner Profile permalinks.
+		 * This allows filtering of the Student Profile permalinks.
 		 *
 		 * @since 1.9.13
 		 */
@@ -134,7 +134,7 @@ class Sensei_Learner_Profiles {
 	}
 
 	/**
-	 * Load content for learner profiles
+	 * Load content for students profiles
 	 *
 	 * @since  1.4.0
 	 * @return void
@@ -155,7 +155,7 @@ class Sensei_Learner_Profiles {
 	}
 
 	/**
-	 * Set heading for courses section of learner profiles
+	 * Set heading for courses section of student profiles
 	 *
 	 * @since  1.4.0
 	 * @param  object $user Queried user object
@@ -173,7 +173,7 @@ class Sensei_Learner_Profiles {
 	}
 
 	/**
-	 * Load user info for learner profiles
+	 * Load user info for student profiles
 	 *
 	 * @since  1.4.0
 	 * @param  object $user Queried user object
@@ -201,7 +201,7 @@ class Sensei_Learner_Profiles {
 
 		/**
 		 * This filter runs inside the Sensei_Learner_Profiles::user_info function.
-		 * Here you can change the learner profile user display name.
+		 * Here you can change the student profile user display name.
 		 *
 		 * @since 1.0.0
 		 *
@@ -212,7 +212,7 @@ class Sensei_Learner_Profiles {
 
 		/**
 		 * This filter runs inside the Sensei_Learner_Profiles::user_info function.
-		 * With this filter can change the users description on the learner user info
+		 * With this filter can change the users description on the student user info
 		 * output.
 		 *
 		 * @since 1.0.0

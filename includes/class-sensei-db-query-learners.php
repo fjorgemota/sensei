@@ -17,7 +17,7 @@ class Sensei_Db_Query_Learners {
 		$this->offset              = isset( $args['offset'] ) ? absint( $args['offset'] ) : 0;
 		$this->course_id           = isset( $args['course_id'] ) ? intval( $args['course_id'] ) : 0;
 		$this->lesson_id           = isset( $args['lesson_id'] ) ? intval( $args['lesson_id'] ) : 0;
-		$this->order_by            = isset( $args['orderby'] ) ? $args['orderby'] : 'learner';
+		$this->order_by            = isset( $args['orderby'] ) ? $args['orderby'] : 'student';
 		$this->order_type          = isset( $args['order'] ) ? strtoupper( $args['order'] ) : 'ASC';
 		$this->search              = isset( $args['search'] ) ? $args['search'] : '';
 		$this->filter_by_course_id = isset( $args['filter_by_course_id'] ) ? absint( $args['filter_by_course_id'] ) : 0;
@@ -63,9 +63,9 @@ class Sensei_Db_Query_Learners {
 
 			$sql .= "
 				INNER JOIN `{$wpdb->comments}` AS `cf`
-					ON `u`.`ID` = `cf`.`user_id` 
+					ON `u`.`ID` = `cf`.`user_id`
 					AND `cf`.`comment_type` = 'sensei_course_status'
-					AND `cf`.comment_post_ID {$eq} {$this->filter_by_course_id} 
+					AND `cf`.comment_post_ID {$eq} {$this->filter_by_course_id}
 					AND `cf`.comment_approved IS NOT NULL";
 		}
 
@@ -81,7 +81,7 @@ class Sensei_Db_Query_Learners {
 		}
 
 		$sql .= ' GROUP BY `u`.`ID`';
-		if ( ! empty( $this->order_by ) && 'learner' === $this->order_by && in_array( $this->order_type, array( 'ASC', 'DESC' ), true ) ) {
+		if ( ! empty( $this->order_by ) && 'student' === $this->order_by && in_array( $this->order_type, array( 'ASC', 'DESC' ), true ) ) {
 			$order_type = $this->order_type;
 			$sql       .= " ORDER BY `u`.`user_login` {$order_type}";
 		}

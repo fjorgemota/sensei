@@ -23,13 +23,13 @@ import { __ } from '@wordpress/i18n';
 import { CourseProgressSettings } from '../../shared/blocks/course-progress';
 
 /**
- * Learner Settings component.
+ * Student Settings component.
  *
  * @param {Object}   props
  * @param {Object}   props.options    Block options attribute.
  * @param {Function} props.setOptions Set options function.
  */
-const LearnerCoursesSettings = ( { options, setOptions } ) => {
+const StudentCoursesSettings = ( { options, setOptions } ) => {
 	const courseSettingsTogglers = [
 		{
 			optionKey: 'featuredImageEnabled',
@@ -169,4 +169,4 @@ const LearnerCoursesSettings = ( { options, setOptions } ) => {
 	);
 };
 
-export default LearnerCoursesSettings;
+export default StudentCoursesSettings;

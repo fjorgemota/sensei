@@ -1,6 +1,6 @@
 <?php
 /**
- * Learner Management
+ * Student Management
  *
  * Handles adding or removing learners from a course/lesson, resetting progress in a course/lesson,
  * and editing the start date of a course/lesson.
@@ -43,7 +43,7 @@ class Sensei_Learner_Management {
 	 */
 	public $page_slug;
 	/**
-	 * Reference to the class responsible for Bulk Learner Actions.
+	 * Reference to the class responsible for Bulk Student Actions.
 	 *
 	 * @var Sensei_Learners_Admin_Bulk_Actions_Controller $bulk_actions_controller
 	 */
@@ -63,7 +63,7 @@ class Sensei_Learner_Management {
 	 * @param string $file Main plugin file name.
 	 */
 	public function __construct( $file ) {
-		$this->name      = __( 'Learner Management', 'sensei-lms' );
+		$this->name      = __( 'Student Management', 'sensei-lms' );
 		$this->file      = $file;
 		$this->page_slug = 'sensei_learners';
 
@@ -96,7 +96,7 @@ class Sensei_Learner_Management {
 	}
 
 	/**
-	 * Add learner management menu.
+	 * Add student management menu.
 	 *
 	 * @since  1.6.0
 	 * @access public
@@ -110,11 +110,11 @@ class Sensei_Learner_Management {
 	}
 
 	/**
-	 * Sets the pagination screen option value for the Bulk Learner Actions table.
+	 * Sets the pagination screen option value for the Bulk Student Actions table.
 	 *
 	 * @param bool   $status Status.
 	 * @param string $option Screen option ID.
-	 * @param string $value  Learners per page.
+	 * @param string $value  Students per page.
 	 * @return bool|string
 	 */
 	public function set_learner_management_screen_option( $status, $option, $value ) {
@@ -125,13 +125,13 @@ class Sensei_Learner_Management {
 	}
 
 	/**
-	 * Adds a "Learners per page" screen option to the Bulk Learner Actions page.
+	 * Adds a "Students per page" screen option to the Bulk Student Actions page.
 	 */
 	public function load_screen_options_when_on_bulk_actions() {
 		if ( isset( $this->bulk_actions_controller ) && $this->bulk_actions_controller->is_current_page() ) {
 
 			$args = array(
-				'label'   => __( 'Learners per page', 'sensei-lms' ),
+				'label'   => __( 'Students per page', 'sensei-lms' ),
 				'default' => 20,
 				'option'  => self::SENSEI_LEARNER_MANAGEMENT_PER_PAGE,
 			);
@@ -168,19 +168,19 @@ class Sensei_Learner_Management {
 		);
 
 		$data = array(
-			'remove_generic_confirm'     => __( 'Are you sure you want to remove this learner?', 'sensei-lms' ),
-			'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the learner from this lesson?', 'sensei-lms' ),
-			'remove_from_course_confirm' => __( 'Are you sure you want to remove this learner\'s enrollment in the course?', 'sensei-lms' ),
-			'enrol_in_course_confirm'    => __( 'Are you sure you want to enroll the learner in this course?', 'sensei-lms' ),
-			'restore_enrollment_confirm' => __( 'Are you sure you want to restore the learner enrollment in this course?', 'sensei-lms' ),
-			'reset_lesson_confirm'       => __( 'Are you sure you want to reset the progress of this learner for this lesson?', 'sensei-lms' ),
-			'reset_course_confirm'       => __( 'Are you sure you want to reset the progress of this learner for this course?', 'sensei-lms' ),
-			'remove_progress_confirm'    => __( 'Are you sure you want to remove the progress of this learner for this course?', 'sensei-lms' ),
+			'remove_generic_confirm'     => __( 'Are you sure you want to remove this student?', 'sensei-lms' ),
+			'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the student from this lesson?', 'sensei-lms' ),
+			'remove_from_course_confirm' => __( 'Are you sure you want to remove this student\'s enrollment in the course?', 'sensei-lms' ),
+			'enrol_in_course_confirm'    => __( 'Are you sure you want to enroll the student in this course?', 'sensei-lms' ),
+			'restore_enrollment_confirm' => __( 'Are you sure you want to restore the student enrollment in this course?', 'sensei-lms' ),
+			'reset_lesson_confirm'       => __( 'Are you sure you want to reset the progress of this student for this lesson?', 'sensei-lms' ),
+			'reset_course_confirm'       => __( 'Are you sure you want to reset the progress of this student for this course?', 'sensei-lms' ),
+			'remove_progress_confirm'    => __( 'Are you sure you want to remove the progress of this student for this course?', 'sensei-lms' ),
 			'modify_user_post_nonce'     => wp_create_nonce( 'modify_user_post_nonce' ),
 			'search_users_nonce'         => wp_create_nonce( 'search-users' ),
 			'edit_date_nonce'            => wp_create_nonce( 'edit_date_nonce' ),
 			'course_category_nonce'      => wp_create_nonce( 'course_category_nonce' ),
-			'selectplaceholder'          => __( 'Select learners to manually enroll...', 'sensei-lms' ),
+			'selectplaceholder'          => __( 'Select students to manually enroll...', 'sensei-lms' ),
 		);
 
 		wp_localize_script( 'sensei-learners-general', 'woo_learners_general_data', $data );
@@ -247,7 +247,7 @@ class Sensei_Learner_Management {
 	}
 
 	/**
-	 * Outputs the content for the Learner Management page.
+	 * Outputs the content for the Student Management page.
 	 *
 	 * @since 1.6.0
 	 * @access public
@@ -325,7 +325,7 @@ class Sensei_Learner_Management {
 				array(
 					'page'      => $this->page_slug,
 					'course_id' => $course_id,
-					'view'      => 'learners',
+					'view'      => 'students',
 				),
 				admin_url( 'admin.php' )
 			);
@@ -473,7 +473,7 @@ class Sensei_Learner_Management {
 	}
 
 	/**
-	 * Handles actions that are performed asynchronously from learner management.
+	 * Handles actions that are performed asynchronously from student management.
 	 *
 	 * @param string $action Action to perform. Currently handled values are 'reset'.
 	 */
@@ -749,7 +749,7 @@ class Sensei_Learner_Management {
 		// Set redirect URL after adding user to course/lesson.
 		$query_args = array(
 			'page' => $this->page_slug,
-			'view' => 'learners',
+			'view' => 'students',
 		);
 
 		if ( $course_id ) {
@@ -789,19 +789,19 @@ class Sensei_Learner_Management {
 				case 'error_enrol':
 					$notice = [
 						'error',
-						__( 'An error occurred while enrolling the learner.', 'sensei-lms' ),
+						__( 'An error occurred while enrolling the student.', 'sensei-lms' ),
 					];
 					break;
 				case 'error_restore_enrollment':
 					$notice = [
 						'error',
-						__( 'An error occurred while restoring learner enrollment.', 'sensei-lms' ),
+						__( 'An error occurred while restoring student enrollment.', 'sensei-lms' ),
 					];
 					break;
 				case 'error_enrol_multiple':
 					$notice = [
 						'error',
-						__( 'An error occurred while enrolling the learners.', 'sensei-lms' ),
+						__( 'An error occurred while enrolling the students.', 'sensei-lms' ),
 					];
 					break;
 				case 'error_withdraw':
@@ -819,20 +819,20 @@ class Sensei_Learner_Management {
 				case 'success_enrol':
 					$notice = [
 						'updated',
-						__( 'Learner has been enrolled.', 'sensei-lms' ),
+						__( 'Student has been enrolled.', 'sensei-lms' ),
 					];
 					break;
 				case 'success_restore_enrollment':
 					$notice = [
 						'updated',
-						__( 'Learner enrollment has been restored.', 'sensei-lms' ),
+						__( 'Student enrollment has been restored.', 'sensei-lms' ),
 					];
 					break;
 				case 'success_bulk':
 				case 'success_enrol_multiple':
 					$notice = [
 						'updated',
-						__( 'Learners have been enrolled.', 'sensei-lms' ),
+						__( 'Students have been enrolled.', 'sensei-lms' ),
 					];
 					break;
 			}

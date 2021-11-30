@@ -16,17 +16,17 @@ const attributes = {
 };
 
 /**
- * Learner messages button block.
+ * Student messages button block.
  */
 export default createButtonBlockType( {
 	tagName: 'a',
 	settings: {
 		name: 'sensei-lms/button-learner-messages',
 		description: __(
-			'Enable a learner to view their messages. This block is only displayed if the learner is logged in and private messaging is enabled.',
+			'Enable a student to view their messages. This block is only displayed if the student is logged in and private messaging is enabled.',
 			'sensei-lms'
 		),
-		title: __( 'Learner Messages Button', 'sensei-lms' ),
+		title: __( 'Student Messages Button', 'sensei-lms' ),
 		attributes,
 		styles: [
 			BlockStyles.Fill,

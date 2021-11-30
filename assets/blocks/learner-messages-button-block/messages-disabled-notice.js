@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Messages disabled notice component.
  * It's used as a wrapper to show the notice messages is disabled and the
- * Learner Messages block is in the editor.
+ * Student Messages block is in the editor.
  *
  * @param {Object} props                      Component props.
  * @param {Object} props.children             Children to be wrapped.
@@ -31,7 +31,7 @@ const MessagesDisabledNotice = ( { children, attributes: { isPreview } } ) => {
 		if ( '1' === window.sensei_messages.disabled ) {
 			createWarningNotice(
 				__(
-					'You have added the "Learner Messages Button" block to your editor, but messages are disabled in your settings.',
+					'You have added the "Student Messages Button" block to your editor, but messages are disabled in your settings.',
 					'sensei-lms'
 				),
 				{

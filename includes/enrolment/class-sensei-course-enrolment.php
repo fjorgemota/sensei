@@ -111,9 +111,9 @@ class Sensei_Course_Enrolment {
 		 * Allow complete side-stepping of enrolment handling in Sensei.
 		 *
 		 * This will have some other side-effects. For example, if using learner queries (My Courses,
-		 * Learner Profiles, etc), you will have to save the learner term and association by using the
+		 * Student Profiles, etc), you will have to save the learner term and association by using the
 		 * `\Sensei_Course_Enrolment::save_enrolment` method. Additionally, manual enrolment handling
-		 * in Learner Management will not have any effect.
+		 * in Student Management will not have any effect.
 		 *
 		 * @since 3.0.0
 		 *

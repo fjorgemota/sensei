@@ -7,9 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'Sensei_Email_Learner_Graded_Quiz', false ) ) :
 
 	/**
-	 * Learner Graded Quiz
+	 * Student Graded Quiz
 	 *
-	 * An email sent to the learner when their quiz has been graded (auto or manual).
+	 * An email sent to the student when their quiz has been graded (auto or manual).
 	 *
 	 * @package Users
 	 * @author Automattic
@@ -53,10 +53,10 @@ if ( ! class_exists( 'Sensei_Email_Learner_Graded_Quiz', false ) ) :
 				return;
 			}
 
-			// Get learner user object
+			// Get student user object
 			$this->user = new WP_User( $user_id );
 
-			// Set recipient (learner)
+			// Set recipient (student)
 			$this->recipient = stripslashes( $this->user->user_email );
 
 			do_action( 'sensei_before_mail', $this->recipient );

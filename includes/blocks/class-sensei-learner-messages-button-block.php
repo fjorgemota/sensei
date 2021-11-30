@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Block for Learner Messages button.
+ * Block for Student Messages button.
  */
 class Sensei_Learner_Messages_Button_Block {
 
@@ -41,7 +41,7 @@ class Sensei_Learner_Messages_Button_Block {
 	}
 
 	/**
-	 * Register learner messages block.
+	 * Register student messages block.
 	 *
 	 * @access private
 	 */
@@ -53,14 +53,14 @@ class Sensei_Learner_Messages_Button_Block {
 	}
 
 	/**
-	 * Render the learner messages button.
+	 * Render the student messages button.
 	 *
 	 * @access private
 	 *
 	 * @param array  $attributes Block attributes.
 	 * @param string $content    Block HTML.
 	 *
-	 * @return string Link to the learner messages button.
+	 * @return string Link to the student messages button.
 	 */
 	public function render_learner_messages_block( $attributes, $content ): string {
 		if ( Sensei()->settings->settings['messages_disable'] ?? false ) {

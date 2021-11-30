@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // Exit if accessed directly
 
 /**
- * This class handles the bulk learner actions in learner management.
+ * This class handles the bulk student actions in student management.
  */
 class Sensei_Learners_Admin_Bulk_Actions_Controller {
 
@@ -89,7 +89,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	}
 
 	/**
-	 * This method adds a 'Learner Admin' submenu page in Sensei. If any content is generated for this page elsewhere,
+	 * This method adds a 'Student Admin' submenu page in Sensei. If any content is generated for this page elsewhere,
 	 * you should move this call beside it.
 	 *
 	 * @deprecated 3.0.0
@@ -99,7 +99,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		_deprecated_function( __METHOD__, '3.0.0' );
 
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
-			add_submenu_page( 'sensei', __( 'Learner Admin', 'sensei-lms' ), __( 'Learner Admin', 'sensei-lms' ), 'manage_sensei_grades', 'sensei_learner_admin', array( $this, 'learner_admin_page' ) );
+			add_submenu_page( 'sensei', __( 'Student Admin', 'sensei-lms' ), __( 'Student Admin', 'sensei-lms' ), 'manage_sensei_grades', 'sensei_learner_admin', array( $this, 'learner_admin_page' ) );
 		}
 	}
 
@@ -109,7 +109,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 * @param Sensei_Learner_Management $management The learner managemnt object.
 	 */
 	public function __construct( $management ) {
-		$this->name               = __( 'Bulk Learner Actions', 'sensei-lms' );
+		$this->name               = __( 'Bulk Student Actions', 'sensei-lms' );
 		$this->page_slug          = $management->page_slug;
 		$this->view               = 'sensei_learner_admin';
 		$this->learner_management = $management;
@@ -128,7 +128,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	}
 
 	/**
-	 * Redirects to the bulk learner management screen and displays a message.
+	 * Redirects to the bulk student management screen and displays a message.
 	 *
 	 * @param string $result The result code or an error message to be displayed.
 	 *
@@ -148,7 +148,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	}
 
 	/**
-	 * Get the url of the bulk learner management screen.
+	 * Get the url of the bulk student management screen.
 	 *
 	 * @return string
 	 */
@@ -163,7 +163,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	}
 
 	/**
-	 * Get the url of the learner management screen of a course.
+	 * Get the url of the student management screen of a course.
 	 *
 	 * @param integer $course_id The course id.
 	 * @return string
@@ -173,7 +173,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 			[
 				'page'      => 'sensei_learners',
 				'course_id' => absint( $course_id ),
-				'view'      => 'learners',
+				'view'      => 'students',
 			],
 			admin_url( 'admin.php' )
 		);
@@ -402,7 +402,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 				break;
 			case 'action-success':
 				$msg_class = 'notice notice-success';
-				$msg       = __( 'Bulk learner action succeeded', 'sensei-lms' );
+				$msg       = __( 'Bulk student action succeeded', 'sensei-lms' );
 				break;
 		}
 

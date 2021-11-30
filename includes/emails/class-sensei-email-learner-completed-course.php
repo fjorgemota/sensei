@@ -7,9 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'Sensei_Email_Learner_Completed_Course', false ) ) :
 
 	/**
-	 * Learner Completed Course
+	 * Student Completed Course
 	 *
-	 * An email sent to the learner when they complete a course.
+	 * An email sent to the student when they complete a course.
 	 *
 	 * @package Users
 	 * @author Automattic
@@ -51,10 +51,10 @@ if ( ! class_exists( 'Sensei_Email_Learner_Completed_Course', false ) ) :
 				return;
 			}
 
-			// Get learner user object
+			// Get student user object
 			$this->user = new WP_User( $user_id );
 
-			// Set recipient (learner)
+			// Set recipient (student)
 			$this->recipient = stripslashes( $this->user->user_email );
 
 			do_action( 'sensei_before_mail', $this->recipient );

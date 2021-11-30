@@ -218,7 +218,7 @@ class Sensei_Emails {
 	}
 
 	/**
-	 * Send email to learner on quiz grading (auto or manual)
+	 * Send email to student on quiz grading (auto or manual)
 	 *
 	 * @access public
 	 * @return void

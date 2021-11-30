@@ -31,7 +31,7 @@ jQuery( document ).ready( function ( $ ) {
 	} );
 
 	/***************************************************************************************************
-	 * 	2 - Learner Management Overview Functions.
+	 * 	2 - Student Management Overview Functions.
 	 ***************************************************************************************************/
 
 	/**
@@ -279,7 +279,7 @@ jQuery( document ).ready( function ( $ ) {
 	 * 	3 - Load Select2 Dropdowns.
 	 ***************************************************************************************************/
 
-	// Learner Management Drop Downs
+	// Student Management Drop Downs
 	if ( jQuery( '#course-category-options' ).exists() ) {
 		jQuery( '#course-category-options' ).select2();
 	}

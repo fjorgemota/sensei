@@ -110,7 +110,7 @@ export const PaginationSidebarSettings = ( {
 			>
 				<p>
 					{ __(
-						'Adjust how your quiz is displayed to your learners.',
+						'Adjust how your quiz is displayed to your students.',
 						'sensei-lms'
 					) }
 				</p>

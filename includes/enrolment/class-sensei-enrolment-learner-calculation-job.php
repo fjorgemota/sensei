@@ -38,7 +38,7 @@ class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Background_Job_
 	 */
 	public function __construct() {
 		/**
-		 * Filter the batch size for the number of users to query per run in the learner calculation job.
+		 * Filter the batch size for the number of users to query per run in the student calculation job.
 		 *
 		 * @since 3.0.0
 		 *

@@ -48,14 +48,14 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Completed_Course', false ) ) :
 			if ( ! Sensei_Course::is_user_enrolled( $course_id, $learner_id ) ) {
 				return;
 			}
-			// Get learner user object
+			// Get student user object
 			$this->learner = new WP_User( $learner_id );
 
 			// Get teacher ID and user object
 			$teacher_id    = get_post_field( 'post_author', $course_id, 'raw' );
 			$this->teacher = new WP_User( $teacher_id );
 
-			// Set recipient (learner)
+			// Set recipient (student)
 			$this->recipient = stripslashes( $this->teacher->user_email );
 
 			do_action( 'sensei_before_mail', $this->recipient );

@@ -34,7 +34,7 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Create a course with learners of various enrollment status
+	 * Create a course with students of various enrollment status
 	 */
 	private function createCourseEnrolments() {
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Provides_For_Dinosaurs::class );
@@ -71,7 +71,7 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 	public function testUsersAreFilteredByEnrolmentStatus( $enrolment_status, $expected_result ) {
 
 		$_GET['course_id']        = $this->course_id;
-		$_GET['view']             = 'learners';
+		$_GET['view']             = 'students';
 		$_GET['enrolment_status'] = $enrolment_status;
 
 		$sensei_learners_main = new Sensei_Learners_Main();
@@ -83,10 +83,10 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 
 	public function enrolmentFilterTestCases() {
 		return [
-			'All learners'               => [ 'all', 9 ],
-			'Enrolled learners'          => [ 'enrolled', 6 ],
-			'Unenrolled learners'        => [ 'unenrolled', 3 ],
-			'Manually enrolled learners' => [ 'manual', 2 ],
+			'All students'               => [ 'all', 9 ],
+			'Enrolled students'          => [ 'enrolled', 6 ],
+			'Unenrolled students'        => [ 'unenrolled', 3 ],
+			'Manually enrolled students' => [ 'manual', 2 ],
 		];
 	}
 }

@@ -36,7 +36,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	private $query_args;
 
 	/**
-	 * The class which handles the bulk learner actions.
+	 * The class which handles the bulk student actions.
 	 *
 	 * @var Sensei_Learners_Admin_Bulk_Actions_Controller
 	 */
@@ -53,7 +53,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * Sensei_Learners_Admin_Main_View constructor.
 	 *
 	 * @param Sensei_Learners_Admin_Bulk_Actions_Controller $controller         The controller.
-	 * @param Sensei_Learner_Management                     $learner_management The learner management.
+	 * @param Sensei_Learner_Management                     $learner_management The student management.
 	 */
 	public function __construct( $controller, $learner_management ) {
 		$this->controller         = $controller;
@@ -93,7 +93,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	public function get_columns() {
 		$columns = array(
 			'cb'         => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox">',
-			'learner'    => __( 'Learner', 'sensei-lms' ),
+			'student'    => __( 'Student', 'sensei-lms' ),
 			'progress'   => __( 'Course Progress', 'sensei-lms' ),
 			'enrolments' => __( 'Enrollments', 'sensei-lms' ),
 		);
@@ -108,7 +108,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 */
 	public function get_sortable_columns() {
 		$columns = array(
-			'learner' => array( 'learner', false ),
+			'student' => array( 'student', false ),
 		);
 		return apply_filters( 'sensei_learner_admin_default_columns_sortable', $columns, $this );
 	}
@@ -147,7 +147,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		if ( ! $item ) {
 			$row_data = array(
 				'cb'         => '',
-				'learner'    => esc_html__( 'No results found', 'sensei-lms' ),
+				'student'    => esc_html__( 'No results found', 'sensei-lms' ),
 				'progress'   => '',
 				'enrolments' => '',
 			);
@@ -156,7 +156,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			$courses  = $this->get_learner_courses_html( $item->course_statuses );
 			$row_data = array(
 				'cb'         => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input type="checkbox" name="user_id" value="' . esc_attr( $learner->user_id ) . '" class="sensei_user_select_id">',
-				'learner'    => $this->get_learner_html( $learner ),
+				'student'    => $this->get_learner_html( $learner ),
 				'progress'   => $courses,
 				'enrolments' => get_term_field( 'count', Sensei_Learner::get_learner_term( $learner->user_id ) ),
 			);
@@ -248,7 +248,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * @see WP_List_Table
 	 */
 	public function no_items() {
-		$text = __( 'No learners found.', 'sensei-lms' );
+		$text = __( 'No students found.', 'sensei-lms' );
 		echo wp_kses_post( apply_filters( 'sensei_learners_no_items_text', $text ) );
 	}
 
@@ -306,7 +306,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	private function render_bulk_action_select_box() {
 		$rendered     =
 			'<select name="sensei_bulk_action_select" id="bulk-action-selector-top">' .
-			'<option value="">' . esc_html__( 'Bulk Learner Actions', 'sensei-lms' ) . '</option>';
+			'<option value="">' . esc_html__( 'Bulk Student Actions', 'sensei-lms' ) . '</option>';
 		$bulk_actions = $this->controller->get_known_bulk_actions();
 
 		foreach ( $bulk_actions as $value => $translation ) {
@@ -372,7 +372,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * Returns the search button text.
 	 */
 	public function search_button() {
-		return __( 'Search Learners', 'sensei-lms' );
+		return __( 'Search Students', 'sensei-lms' );
 	}
 
 	/**

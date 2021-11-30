@@ -15,7 +15,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import CourseProgress from '../../shared/blocks/course-progress';
-import LearnerCoursesSettings from './learner-courses-settings';
+import StudentCoursesSettings from './student-courses-settings';
 
 /**
  * Featured image placeholder element.
@@ -73,7 +73,7 @@ const StylesWrapper = ( {
 };
 
 /**
- * Learner Settings component.
+ * Student Settings component.
  *
  * @param {Object}   props
  * @param {Object}   props.className          Block className.
@@ -81,7 +81,7 @@ const StylesWrapper = ( {
  * @param {Object}   props.attributes.options Block options attribute.
  * @param {Function} props.setAttributes      Block set attributes function.
  */
-const LearnerCoursesEdit = ( {
+const StudentCoursesEdit = ( {
 	className,
 	attributes: { options },
 	setAttributes,
@@ -225,7 +225,7 @@ const LearnerCoursesEdit = ( {
 					{ Array.from( { length: 2 } ).map( coursesPlaceholderMap ) }
 				</ul>
 			</StylesWrapper>
-			<LearnerCoursesSettings
+			<StudentCoursesSettings
 				options={ options }
 				setOptions={ setOptions }
 			/>
@@ -233,4 +233,4 @@ const LearnerCoursesEdit = ( {
 	);
 };
 
-export default LearnerCoursesEdit;
+export default StudentCoursesEdit;

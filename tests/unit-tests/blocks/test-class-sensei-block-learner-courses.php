@@ -9,7 +9,7 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
 
 	/**
-	 * Learner Courses block.
+	 * Student Courses block.
 	 *
 	 * @var Sensei_Learner_Courses_Block
 	 */
@@ -36,7 +36,7 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The Learner Courses block is registered and renders content.
+	 * The Student Courses block is registered and renders content.
 	 */
 	public function testBlockRegistered() {
 		$post_content = '<!-- wp:sensei-lms/learner-courses --><!-- /wp:sensei-lms/learner-courses -->';
@@ -51,7 +51,7 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Lists the learner's courses.
+	 * Lists the student's courses.
 	 */
 	public function testShowsUsersCourses() {
 		$course  = $this->factory->course->create_and_get();

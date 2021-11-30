@@ -35,7 +35,7 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	private $course_id;
 
 	/**
-	 * Number of learners to calculate per batch.
+	 * Number of students to calculate per batch.
 	 *
 	 * @var int
 	 */

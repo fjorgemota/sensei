@@ -44,7 +44,7 @@ class Sensei_Enrolment_Job_Scheduler {
 	 * Initialize the hooks.
 	 */
 	public function init() {
-		// Handle job that ensures all learners have up-to-date enrolment calculations.
+		// Handle job that ensures all students have up-to-date enrolment calculations.
 		add_action( 'init', [ $this, 'maybe_start_learner_calculation' ], 101 );
 		add_filter( 'sensei_background_job_actions', [ $this, 'get_background_jobs' ] );
 
@@ -119,7 +119,7 @@ class Sensei_Enrolment_Job_Scheduler {
 	}
 
 	/**
-	 * Check to see if we need to start learner calculation job.
+	 * Check to see if we need to start student calculation job.
 	 *
 	 * @access private
 	 */

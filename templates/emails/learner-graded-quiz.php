@@ -1,6 +1,6 @@
 <?php
 /**
- * Learner graded quiz email
+ * Student graded quiz email
  *
  * @author  Automattic
  * @package Sensei/Templates/Emails/HTML

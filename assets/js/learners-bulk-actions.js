@@ -93,7 +93,7 @@ jQuery( document ).ready( function () {
 						if ( selectedUserIds.length === 0 ) {
 							return {
 								isValid: false,
-								reason: 'Select some learners',
+								reason: 'Select some students',
 							};
 						}
 						return validTemplate;

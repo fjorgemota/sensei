@@ -308,7 +308,7 @@ class Sensei_Course {
 		add_meta_box( 'course-video', __( 'Course Video', 'sensei-lms' ), array( $this, 'course_video_meta_box_content' ), $this->token, 'normal', 'default' );
 		// Add Meta Box for Course Lessons
 		add_meta_box( 'course-lessons', __( 'Course Lessons', 'sensei-lms' ), array( $this, 'course_lessons_meta_box_content' ), $this->token, 'normal', 'default' );
-		// Add Meta Box to link to Manage Learners
+		// Add Meta Box to link to Manage Students
 		add_meta_box( 'course-manage', __( 'Course Management', 'sensei-lms' ), array( $this, 'course_manage_meta_box_content' ), $this->token, 'side', 'default' );
 		// Remove "Custom Settings" meta box.
 		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
@@ -663,7 +663,7 @@ class Sensei_Course {
 			array(
 				'page'      => 'sensei_learners',
 				'course_id' => $post->ID,
-				'view'      => 'learners',
+				'view'      => 'students',
 			),
 			admin_url( 'admin.php' )
 		);
@@ -671,12 +671,12 @@ class Sensei_Course {
 			array(
 				'page'      => 'sensei_grading',
 				'course_id' => $post->ID,
-				'view'      => 'learners',
+				'view'      => 'students',
 			),
 			admin_url( 'admin.php' )
 		);
 
-		echo '<ul><li><a href=' . esc_url( $manage_url ) . '>' . esc_html__( 'Manage Learners', 'sensei-lms' ) . '</a></li>';
+		echo '<ul><li><a href=' . esc_url( $manage_url ) . '>' . esc_html__( 'Manage Students', 'sensei-lms' ) . '</a></li>';
 		echo '<li><a href=' . esc_url( $grading_url ) . '>' . esc_html__( 'Manage Grading', 'sensei-lms' ) . '</a></li></ul>';
 	}
 
@@ -1783,8 +1783,8 @@ class Sensei_Course {
 			$no_active_message   = __( 'You have no active courses.', 'sensei-lms' );
 			$no_complete_message = __( 'You have not completed any courses yet.', 'sensei-lms' );
 		} else {
-			$no_active_message   = __( 'This learner has no active courses.', 'sensei-lms' );
-			$no_complete_message = __( 'This learner has not completed any courses yet.', 'sensei-lms' );
+			$no_active_message   = __( 'This student has no active courses.', 'sensei-lms' );
+			$no_complete_message = __( 'This student has not completed any courses yet.', 'sensei-lms' );
 		}
 
 		ob_start();

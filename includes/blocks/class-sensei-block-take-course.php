@@ -158,7 +158,7 @@ class Sensei_Block_Take_Course {
 	}
 
 	/**
-	 * Message text for prerequisite course the learner has to complete.
+	 * Message text for prerequisite course the student has to complete.
 	 *
 	 * @param int $course_id
 	 *

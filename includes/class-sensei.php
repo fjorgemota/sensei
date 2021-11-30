@@ -395,7 +395,7 @@ class Sensei_Main {
 		// Load the modules class after all plugins are loaded.
 		$this->load_modules_class();
 
-		// Load Learner Management Functionality.
+		// Load Student Management Functionality.
 		$this->learners = new Sensei_Learner_Management( $this->main_plugin_file_name );
 
 		$this->view_helper = new Sensei_View_Helper();
@@ -457,7 +457,7 @@ class Sensei_Main {
 		// Load Email Class
 		$this->emails = new Sensei_Emails( $this->main_plugin_file_name );
 
-		// Load Learner Profiles Class
+		// Load Student Profiles Class
 		$this->learner_profiles = new Sensei_Learner_Profiles();
 
 		// Load WPML compatibility class

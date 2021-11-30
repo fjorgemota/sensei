@@ -7,7 +7,7 @@ import { render, fireEvent } from '@testing-library/react';
 /**
  * Internal dependencies
  */
-import LearnerCoursesSettings from './learner-courses-settings';
+import StudentCoursesSettings from './student-courses-settings';
 
 jest.mock( '@wordpress/block-editor', () => ( {
 	...jest.requireActual( '@wordpress/block-editor' ),
@@ -16,7 +16,7 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	PanelColorSettings: () => 'Color settings',
 } ) );
 
-describe( '<LearnerCoursesSettings />', () => {
+describe( '<StudentCoursesSettings />', () => {
 	it( 'Should render the settings with the defined values', () => {
 		const options = {
 			courseDescriptionEnabled: true,
@@ -33,7 +33,7 @@ describe( '<LearnerCoursesSettings />', () => {
 			queryByText,
 			queryByTestId,
 		} = render(
-			<LearnerCoursesSettings
+			<StudentCoursesSettings
 				options={ options }
 				setOptions={ () => {} }
 			/>
@@ -89,7 +89,7 @@ describe( '<LearnerCoursesSettings />', () => {
 			queryByText,
 			queryByTestId,
 		} = render(
-			<LearnerCoursesSettings
+			<StudentCoursesSettings
 				options={ options }
 				setOptions={ setOptionsMock }
 			/>
@@ -149,7 +149,7 @@ describe( '<LearnerCoursesSettings />', () => {
 		};
 
 		const { queryByText } = render(
-			<LearnerCoursesSettings
+			<StudentCoursesSettings
 				options={ options }
 				setOptions={ () => {} }
 			/>

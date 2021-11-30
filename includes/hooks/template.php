@@ -227,7 +227,7 @@ add_filter( 'the_content', array( 'Sensei_Lesson', 'limit_archive_content' ) );
  */
 
 // @since 1.9.0
-// do the sensei complete course action on the learner profiles page.
+// do the sensei complete course action on the student profiles page.
 add_action( 'sensei_learner_profile_content_before', array( 'Sensei_Templates', 'fire_sensei_complete_course_hook' ) );
 
 // @since 1.9.0

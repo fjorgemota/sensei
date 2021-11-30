@@ -155,13 +155,13 @@ class Sensei_Analysis {
 			// Viewing a specific Learner, and their Courses
 			$this->analysis_user_profile_view( $user_id );
 		} else {
-			// Overview of all Learners, all Courses, or all Lessons
+			// Overview of all Students, all Courses, or all Lessons
 			$this->analysis_default_view( $type );
 		}
 	}
 
 	/**
-	 * Default view for analysis, showing an overview of all Learners, Courses and Lessons
+	 * Default view for analysis, showing an overview of all Students, Courses and Lessons
 	 *
 	 * @since  1.2.0
 	 * @return void
@@ -650,7 +650,7 @@ class Sensei_Analysis {
 				$sensei_analysis_report_object = $this->load_report_object( 'User_Profile', $user_id );
 				$event_properties['view']      = 'user-courses';
 			} else {
-				// Overview of all Learners, all Courses, or all Lessons
+				// Overview of all Students, all Courses, or all Lessons
 				$sensei_analysis_report_object = $this->load_report_object( 'Overview', $type );
 				$event_properties['view']      = isset( $_GET['view'] ) ? $_GET['view'] : '';
 			}

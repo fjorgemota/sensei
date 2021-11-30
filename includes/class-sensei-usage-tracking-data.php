@@ -39,7 +39,7 @@ class Sensei_Usage_Tracking_Data {
 			'enrolment_first'         => self::get_first_course_enrolment(),
 			'enrolment_last'          => self::get_last_course_enrolment(),
 			'enrolment_calculated'    => self::get_is_enrolment_calculated() ? 1 : 0,
-			'learners'                => self::get_learner_count(),
+			'students'                => self::get_learner_count(),
 			'lessons'                 => wp_count_posts( 'lesson' )->publish,
 			'lesson_modules'          => self::get_lesson_module_count(),
 			'lesson_prereqs'          => self::get_lesson_prerequisite_count(),
@@ -71,7 +71,7 @@ class Sensei_Usage_Tracking_Data {
 		$base_fields = [
 			'paid'     => 0,
 			'courses'  => wp_count_posts( 'course' )->publish,
-			'learners' => self::get_learner_count(),
+			'students' => self::get_learner_count(),
 		];
 
 		/**
@@ -233,7 +233,7 @@ class Sensei_Usage_Tracking_Data {
 	}
 
 	/**
-	 * Get the total number of active courses across all learners.
+	 * Get the total number of active courses across all students.
 	 *
 	 * @since 1.10.0
 	 *
@@ -250,7 +250,7 @@ class Sensei_Usage_Tracking_Data {
 	}
 
 	/**
-	 * Get the total number of completed courses across all learners.
+	 * Get the total number of completed courses across all students.
 	 *
 	 * @since 1.10.0
 	 *

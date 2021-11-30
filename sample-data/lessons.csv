@@ -662,7 +662,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:image -->
 
 <!-- wp:heading {""level"":4} -->
-<h4>Emails Sent to Learners</h4>
+<h4>Emails Sent to Students</h4>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
@@ -766,7 +766,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {""level"":4} -->
-<h4>Show learner's courses</h4>
+<h4>Show students's courses</h4>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
@@ -815,7 +815,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:sensei-lms/button-contact-teacher -->
 
 <!-- wp:paragraph -->
-<p>Registered users have the ability to send a private message to teachers, regardless of whether or not they are enrolled in a particular course. This allows enrolled learners to ask questions about course materials, while also enabling those who are not enrolled to get answers to their general course questions.</p>
+<p>Registered users have the ability to send a private message to teachers, regardless of whether or not they are enrolled in a particular course. This allows enrolled students to ask questions about course materials, while also enabling those who are not enrolled to get answers to their general course questions.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
@@ -1037,7 +1037,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>To manage your learners, locate the relevant course and click the <em>Manage learners</em> button. By default, a list of all learners who were ever enrolled in the course are displayed. This view can be filtered to only show those learners who are currently enrolled (<em>Enrolled Learners</em>), or only those who are unenrolled (<em>Unenrolled Learners</em>):</p>
+<p>To manage your learners, locate the relevant course and click the <em>Manage learners</em> button. By default, a list of all students who were ever enrolled in the course are displayed. This view can be filtered to only show those learners who are currently enrolled (<em>Enrolled Students</em>), or only those who are unenrolled (<em>Unenrolled Learners</em>):</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:image {""id"":3649,""width"":735,""sizeSlug"":""large""} -->
@@ -1073,7 +1073,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:image -->
 
 <!-- wp:paragraph -->
-<p>If a learner does not already appear in Learner Management, they can be added by scrolling to the bottom of the page, searching for and selecting them in the <em>Add Learner to Course</em> panel, and clicking the button. You can optionally choose to complete the course for the learner by checking the <em>Complete course for learner</em> box. Multiple learners can be added simultaneously:</p>
+<p>If a learner does not already appear in Learner Management, they can be added by scrolling to the bottom of the page, searching for and selecting them in the <em>Add Learner to Course</em> panel, and clicking the button. You can optionally choose to complete the course for the learner by checking the <em>Complete course for student</em> box. Multiple learners can be added simultaneously:</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:image {""id"":3375,""width"":735,""height"":320,""sizeSlug"":""large""} -->
@@ -1129,7 +1129,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:image -->
 
 <!-- wp:paragraph -->
-<p>As with courses, the learners for an individual lesson can be managed by clicking the <em>Manage learners</em> button. By default, a list of all learners who ever viewed the lesson are displayed:</p>
+<p>As with courses, the learners for an individual lesson can be managed by clicking the <em>Manage learners</em> button. By default, a list of all students who ever viewed the lesson are displayed:</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:image {""id"":3656,""width"":735,""sizeSlug"":""large""} -->
@@ -1141,7 +1141,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>A learner can be added to the lesson by scrolling to the bottom of the page, searching for and selecting them in the <em>Add Learner to Lesson</em> panel, and clicking the button. This will also enroll the learner in the course if they are not already taking it. You can optionally choose to complete the lesson for the learner by checking the <em>Complete lesson for learner</em> box. If the lesson has a quiz, the learner will automatically pass it. Multiple learners can be added simultaneously:</p>
+<p>A learner can be added to the lesson by scrolling to the bottom of the page, searching for and selecting them in the <em>Add Learner to Lesson</em> panel, and clicking the button. This will also enroll the learner in the course if they are not already taking it. You can optionally choose to complete the lesson for the learner by checking the <em>Complete lesson for student</em> box. If the lesson has a quiz, the learner will automatically pass it. Multiple learners can be added simultaneously:</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:image {""id"":3373,""width"":735,""height"":306,""sizeSlug"":""large""} -->
@@ -1254,7 +1254,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:paragraph -->
 
 <!-- wp:list -->
-<ul><li><em>Course</em> - Name of the course</li><li><em>Learners</em> - Number of learners currently enrolled in the course</li><li><em>Lessons</em> - Number of lessons in the course</li><li><em>Completed</em> - Number of learners who have completed the course</li><li><em>Average Percentage</em> - Average percentage of the course across all learners</li></ul>
+<ul><li><em>Course</em> - Name of the course</li><li><em>Learners</em> - Number of learners currently enrolled in the course</li><li><em>Lessons</em> - Number of lessons in the course</li><li><em>Completed</em> - Number of learners who have completed the course</li><li><em>Average Percentage</em> - Average percentage of the course across all students</li></ul>
 <!-- /wp:list -->
 
 <!-- wp:image {""id"":3224,""width"":735,""height"":290,""sizeSlug"":""large""} -->
@@ -1278,7 +1278,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:paragraph -->
 
 <!-- wp:html -->
-<p id=""course-lesson-learners"">Drilling down even further into a specific lesson displays all learners who are currently taking or have already completed the lesson:</p>
+<p id=""course-lesson-learners"">Drilling down even further into a specific lesson displays all students who are currently taking or have already completed the lesson:</p>
 <!-- /wp:html -->
 
 <!-- wp:image {""id"":3234,""width"":734,""height"":194,""sizeSlug"":""large""} -->
@@ -1652,7 +1652,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:image -->
 
 <!-- wp:paragraph -->
-<p>To show quizzes for a specific learner, enter the learner into the search box and click the <em>Search Users</em> button. To display all learners again, clear the search box and submit an empty search:</p>
+<p>To show quizzes for a specific learner, enter the learner into the search box and click the <em>Search Users</em> button. To display all students again, clear the search box and submit an empty search:</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:image {""id"":3280,""width"":735,""height"":221,""sizeSlug"":""large""} -->

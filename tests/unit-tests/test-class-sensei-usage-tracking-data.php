@@ -530,8 +530,8 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
 		// Despite being enrolled in multiple courses, a learner is only counted once.
-		$this->assertArrayHasKey( 'learners', $usage_data, 'Key' );
-		$this->assertEquals( count( $subscribers ), $usage_data['learners'], 'Count' );
+		$this->assertArrayHasKey( 'students', $usage_data, 'Key' );
+		$this->assertEquals( count( $subscribers ), $usage_data['students'], 'Count' );
 	}
 
 	/**

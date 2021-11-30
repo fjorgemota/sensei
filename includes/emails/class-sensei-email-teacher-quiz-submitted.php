@@ -43,7 +43,7 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Quiz_Submitted', false ) ) :
 		function trigger( $learner_id = 0, $quiz_id = 0 ) {
 			global  $sensei_email_data;
 
-			// Get learner user object
+			// Get student user object
 			$this->learner = new WP_User( $learner_id );
 
 			// Get teacher ID and user object

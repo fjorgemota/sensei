@@ -35,7 +35,7 @@ class Sensei_Status_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Show `Disabled` when learner calculation job is disabled.
+	 * Show `Disabled` when student calculation job is disabled.
 	 */
 	public function testIsCalculationPendingInfoDisabled() {
 		add_filter( 'sensei_is_enrolment_background_job_enabled', '__return_false' );
@@ -48,7 +48,7 @@ class Sensei_Status_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Show `Pending` when learner calculation job is pending.
+	 * Show `Pending` when student calculation job is pending.
 	 */
 	public function testIsCalculationPendingInfoPending() {
 		update_option( Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME, md5( uniqid() ) );
@@ -58,7 +58,7 @@ class Sensei_Status_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Show `Complete` when learner calculation job is completed.
+	 * Show `Complete` when student calculation job is completed.
 	 */
 	public function testIsCalculationPendingInfoCompleted() {
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
