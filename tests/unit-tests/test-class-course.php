@@ -10,7 +10,8 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	public function __construct() {
 		parent::__construct();
 
-		$this->factory = new Sensei_Factory();
+		$this->factory        = new Sensei_Factory();
+		$this->injected_mocks = [];
 	}
 
 	/**
@@ -438,5 +439,130 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		$actual   = Sensei_Course::get_view_results_link( $course_id );
 
 		$this->assertEquals( $expected, $actual );
+	}
+
+	public function testAlterRedirectUrlAfterEnrolmentDoesNothingIfThemeNotEnabled() {
+		$course_theme_option_mock = $this->injectMock( Sensei_Course_Theme_Option::class, 'instance' );
+		$course_theme_option_mock->expects( $this->once() )
+			->method( 'has_sensei_theme_enabled' )
+			->willReturn( false );
+
+		$course_id             = $this->factory->course->create(
+			[
+				'post_name' => 'a-course',
+			]
+		);
+		$course                = get_post( $course_id );
+		$course_structure_mock = $this->injectMock( Sensei_Course_Structure::class, 'instances', $course_id );
+		$course_structure_mock->expects( $this->never() )
+			->method( 'get_first_incomplete_lesson_id' );
+		$original_url = 'http://original';
+
+		$output = Sensei_Course::alter_redirect_url_after_enrolment( $original_url, $course );
+
+		$this->assertEquals( $original_url, $output );
+		$this->resetMocks();
+	}
+
+	public function testAlterRedirectUrlAfterEnrolmentReturnsSameUrlIfNoFirstLessonFound() {
+		$course_theme_option_mock = $this->injectMock( Sensei_Course_Theme_Option::class, 'instance' );
+		$course_theme_option_mock->expects( $this->once() )
+			->method( 'has_sensei_theme_enabled' )
+			->willReturn( true );
+
+		$course_id             = $this->factory->course->create(
+			[
+				'post_name' => 'a-course',
+			]
+		);
+		$course_structure_mock = $this->injectMock( Sensei_Course_Structure::class, 'instances', $course_id );
+		$course_structure_mock->expects( $this->once() )
+			->method( 'get_first_incomplete_lesson_id' )
+			->willReturn( false );
+
+		$course       = get_post( $course_id );
+		$original_url = 'http://original';
+		$output       = Sensei_Course::alter_redirect_url_after_enrolment( $original_url, $course );
+
+		$this->assertEquals( $original_url, $output );
+		$this->resetMocks();
+	}
+
+	public function testAlterRedirectUrlAfterEnrolmentReturnsFirstIncompleteLessonPermalink() {
+		$course_theme_option_mock = $this->injectMock( Sensei_Course_Theme_Option::class, 'instance' );
+		$course_theme_option_mock->expects( $this->once() )
+			->method( 'has_sensei_theme_enabled' )
+			->willReturn( true );
+
+		$course_id             = $this->factory->course->create(
+			[
+				'post_name' => 'a-course',
+			]
+		);
+		$lesson_id             = $this->factory->lesson->create();
+		$course_structure_mock = $this->injectMock( Sensei_Course_Structure::class, 'instances', $course_id );
+		$course_structure_mock->expects( $this->once() )
+			->method( 'get_first_incomplete_lesson_id' )
+			->willReturn( $lesson_id );
+
+		$course       = get_post( $course_id );
+		$original_url = 'http://original';
+		$output       = Sensei_Course::alter_redirect_url_after_enrolment( $original_url, $course );
+
+		$expected_url = get_permalink( $lesson_id );
+		$this->assertEquals( $expected_url, $output );
+		$this->resetMocks();
+	}
+
+	/**
+	 * Inject a mock to the singleton instance by classname and attribute.
+	 * Works also for multiples instances indexed by a simple key.
+	 *
+	 * @param String $classname       Class name we want to inject. Can be a string or a FooBar::class.
+	 * @param String $attribute       Singleton attribute where the mock needs to be injected.
+	 * @param null   $attribute_index If given it will handle the attribute as an indexed array by this value.
+	 * @return \PHPUnit\Framework\MockObject\MockObject Mock generated
+	 * @throws ReflectionException
+	 */
+	private function injectMock( $classname, $attribute, $attribute_index = null ) {
+		$mock     = $this->createMock( $classname );
+		$property = new ReflectionProperty( $classname, $attribute );
+		$property->setAccessible( true );
+		$real_instance = $property->getValue();
+		if ( null !== $attribute_index ) {
+			$new_instance                     = $real_instance;
+			$real_instance                    = $real_instance[ $attribute_index ] ?? null;
+			$new_instance[ $attribute_index ] = $mock;
+			$property->setValue( $new_instance );
+		} else {
+			$property->setValue( $mock );
+		}
+
+		if ( ! isset( $this->injected_mocks[ $classname ] ) ) {
+			$this->injected_mocks[ $classname ] = [];
+		}
+		$this->injected_mocks[ $classname ][] = [ $property, $attribute_index, $real_instance ];
+
+		return $mock;
+	}
+
+	/**
+	 * Reset injected mocks to their original instances.
+	 * This needs to be called at the end of any test that has previously injected a mock
+	 * by using `$this->injectMock` method.
+	 */
+	private function resetMocks() {
+		foreach ( $this->injected_mocks as $classname => $injections ) {
+			foreach ( $injections as list( $property, $attribute_index, $real_instance ) ) {
+				if ( null === $attribute_index ) {
+					$property->setValue( $real_instance );
+				} else {
+					$new_value                     = $property->getValue();
+					$new_value[ $attribute_index ] = $real_instance;
+					$property->setValue( $new_value );
+				}
+			}
+		}
+		$this->injected_mocks = [];
 	}
 }
