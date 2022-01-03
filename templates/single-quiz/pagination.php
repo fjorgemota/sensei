@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $sensei_question_loop;
 
+error_log("U paginationsam: ");
 $sensei_can_take_quiz = Sensei_Quiz::can_take_quiz();
 
 ?>
