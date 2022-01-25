@@ -4076,8 +4076,7 @@ class Sensei_Lesson {
 	function save_all_lessons_edit_fields() {
 
 		// verify all the data before attempting to save
-		if ( ! isset( $_POST['security'] ) || ! check_ajax_referer( 'bulk-edit-lessons', 'security' )
-			 || empty( $_POST['post_ids'] ) || ! is_array( $_POST['post_ids'] ) ) {
+		if ( ! isset( $_POST['security'] ) || ! check_ajax_referer( 'bulk-edit-lessons', 'security' ) || empty( $_POST['post_ids'] ) || ! is_array( $_POST['post_ids'] ) ) {
 			die();
 		}
 
