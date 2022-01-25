@@ -5056,7 +5056,7 @@ class Sensei_Lesson {
 	 * Saves the quiz post meta settings
 	 *
 	 * @param int|null $lesson_id
-	 * @param string $new_settings
+	 * @param string   $new_settings
 	 */
 	private function save_quiz_settings( $lesson_id, array $new_settings ) {
 
@@ -5065,7 +5065,7 @@ class Sensei_Lesson {
 		if ( isset( $quiz_id ) && 0 < intval( $quiz_id ) ) {
 
 			// update pass required.
-			if ( - 1 != $new_settings['pass_required'] ) {
+			if ( - 1 !== $new_settings['pass_required'] ) {
 
 				$checked = $new_settings['pass_required'] ? 'on' : 'off';
 				update_post_meta( $quiz_id, '_pass_required', $checked );
@@ -5080,7 +5080,7 @@ class Sensei_Lesson {
 			}
 
 			// update enable quiz reset.
-			if ( - 1 != $new_settings['enable_quiz_reset'] ) {
+			if ( - 1 !== $new_settings['enable_quiz_reset'] ) {
 
 				$checked = $new_settings['enable_quiz_reset'] ? 'on' : '';
 				update_post_meta( $quiz_id, '_enable_quiz_reset', $checked );
@@ -5089,7 +5089,7 @@ class Sensei_Lesson {
 			}
 
 			// update random question order.
-			if ( - 1 != $new_settings['random_question_order'] ) {
+			if ( - 1 !== $new_settings['random_question_order'] ) {
 
 				$checked = $new_settings['random_question_order'] ? 'yes' : 'no';
 				update_post_meta( $quiz_id, '_random_question_order', $checked );
@@ -5097,7 +5097,7 @@ class Sensei_Lesson {
 			}
 
 			// update quiz grade type.
-			if ( - 1 != $new_settings['quiz_grade_type'] ) {
+			if ( - 1 !== $new_settings['quiz_grade_type'] ) {
 
 				$checked = $new_settings['quiz_grade_type'] ? 'auto' : 'manual';
 				update_post_meta( $quiz_id, '_quiz_grade_type', $checked );
