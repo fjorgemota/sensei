@@ -3919,7 +3919,7 @@ class Sensei_Lesson {
 
 					?>
 
-				<h4><?php esc_html_e( 'Quiz Settings', 'sensei-lms' ); ?> </h4>
+					<h4><?php esc_html_e( 'Quiz Settings', 'sensei-lms' ); ?> </h4>
 
 				<?php
 
@@ -4035,7 +4035,7 @@ class Sensei_Lesson {
 	public function generate_all_lessons_edit_field( $title, $field ) {
 
 		$html  = '';
-		$html  = '<div class="inline-edit-group quiz-settings" >';
+		$html  = '<div class="inline-edit-group sensei-quiz-settings" >';
 		$html .= '<span class="title">' . esc_html( $title ) . '</span> ';
 		$html .= '<span class="input-text-wrap">';
 		$html .= $field;
