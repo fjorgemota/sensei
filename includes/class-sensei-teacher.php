@@ -421,14 +421,22 @@ class Sensei_Teacher {
 			$term_author = Sensei_Core_Modules::get_term_author( $term->slug );
 
 			if ( ! $term_author || intval( $new_teacher_id ) !== intval( $term_author->ID ) ) {
+				$admin_slug     = sanitize_title( trim( $term->name ) );
 				$new_slug       = $new_teacher_id . '-' . sanitize_title( trim( $term->name ) );
 				$search_slugs   = array();
 				$search_slugs[] = $new_slug;
 
+				// In case the last assigned teacher to this course was an admin.
+				array_unshift( $search_slugs, $admin_slug );
+
+				// In case there was a previous author who was not an admin, that user should have the slug prefixing that user's id, if there was any.
+				if ( $term_author && intval( $new_teacher_id ) !== intval( $term_author->ID ) ) {
+					$previous_teacher_slug = $term_author->ID . '-' . sanitize_title( trim( $term->name ) );
+					array_unshift( $search_slugs, $previous_teacher_slug );
+				}
+
 				// First, try to recycle an existing module.
 				if ( user_can( $new_teacher_id, 'manage_options' ) ) {
-					$admin_slug = sanitize_title( trim( $term->name ) );
-					array_unshift( $search_slugs, $admin_slug );
 					$new_slug = $admin_slug;
 				}
 
