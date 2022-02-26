@@ -178,7 +178,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				break;
 
 			case 'lessons':
-				$this->items = $this->get_lessons( $args );
+				$this->items = $this->get_lessons( $args, $this->get_selected_course_id() );
 				break;
 
 			case 'users':
@@ -248,7 +248,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				break;
 
 			case 'lessons':
-				$this->items = $this->get_lessons( $args );
+				$this->items = $this->get_lessons( $args, $this->get_selected_course_id() );
 				break;
 
 			case 'users':
@@ -523,12 +523,21 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	}
 
 	/**
-	 * Return array of lessons
+	 * Return array of lessons.
 	 *
 	 * @since  1.7.0
-	 * @return array lessons
+	 *
+	 * @param array $args      The query arguments.
+	 * @param int   $course_id The selected course ID.
+	 *
+	 * @return array Lesson posts or empty array if no course is selected.
 	 */
-	private function get_lessons( $args ) {
+	private function get_lessons( array $args, int $course_id ): array {
+
+		if ( ! $course_id ) {
+			return [];
+		}
+
 		$lessons_args = array(
 			'post_type'        => 'lesson',
 			'post_status'      => array( 'publish', 'private' ),
@@ -536,6 +545,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			'offset'           => $args['offset'],
 			'orderby'          => $args['orderby'],
 			'order'            => $args['order'],
+			'meta_key'         => '_lesson_course', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Applying the course filter.
+			'meta_value'       => $course_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Applying the course filter.
 			'suppress_filters' => 0,
 		);
 
@@ -547,9 +558,10 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			$lessons_args['s'] = $args['search'];
 		}
 
-		// Using WP_Query as get_posts() doesn't support 'found_posts'
+		// Using WP_Query as get_posts() doesn't support 'found_posts'.
 		$lessons_query     = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_lessons', $lessons_args ) );
 		$this->total_items = $lessons_query->found_posts;
+
 		return $lessons_query->posts;
 	}
 
@@ -753,6 +765,16 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		}
 
 		return $text;
+	}
+
+	/**
+	 * Get the selected course ID.
+	 *
+	 * @return int The course ID or 0 if none is selected.
+	 */
+	private function get_selected_course_id() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
+		return isset( $_GET['course_id'] ) ? (int) $_GET['course_id'] : 0;
 	}
 
 }
