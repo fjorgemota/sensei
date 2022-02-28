@@ -278,7 +278,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		switch ( $this->type ) {
 			case 'courses':
-				// Last Activity
+				// Last Activity.
 				$last_activity_date = $this->get_course_last_activity_date( $item->ID );
 
 				// Get Course Completions
