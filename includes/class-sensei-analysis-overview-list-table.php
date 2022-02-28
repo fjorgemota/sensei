@@ -278,7 +278,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		switch ( $this->type ) {
 			case 'courses':
-				//Last Activity
+				// Last Activity
 				$last_activity_date = $this->get_course_last_activity_date( $item->ID );
 
 				// Get Course Completions
@@ -508,9 +508,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$last_activity = Sensei_Utils::sensei_check_for_activity(
 			[
 				'post__in' => Sensei()->course->course_lessons( $course_id, 'any', 'ids' ),
-				'type'    => 'sensei_lesson_status',
-				'status'  => [ 'complete', 'passed', 'graded' ],
-				'number'  => 1,
+				'type'     => 'sensei_lesson_status',
+				'status'   => [ 'complete', 'passed', 'graded' ],
+				'number'   => 1,
 			],
 			true
 		);
