@@ -39,6 +39,7 @@ class Sensei_Analysis {
 			add_action( 'analysis_wrapper_container', array( $this, 'wrapper_container' ) );
 
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
+				add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
 
@@ -67,6 +68,17 @@ class Sensei_Analysis {
 				array( $this, 'analysis_page' )
 			);
 		}
+	}
+
+	/**
+	 * Enqueue JS scripts.
+	 *
+	 * @since 4.2.0
+	 */
+	public function enqueue_scripts() {
+
+		Sensei()->assets->enqueue( 'sensei-reports', 'js/admin/reports.js', [ 'jquery' ] );
+
 	}
 
 	/**
