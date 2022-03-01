@@ -17,7 +17,7 @@ jobs:
               uses: fjorgemota/github-action-report-artifact@main
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
-                  artifact-name: sensei-lms-${{ github.event.workflow_run.head_sha }}.zip
+                  artifact-name: sensei-lms-${{ github.event.workflow_run.head_sha }}
                   report-on: commit_status
                   context: Plugin Download
                   message: Click on "Details" to download the plugin build for this commit
