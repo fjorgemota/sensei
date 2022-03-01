@@ -11,6 +11,7 @@ jobs:
         name: Report Plugin Build
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/checkout@v2
             - name: Get the artifact data for current run
               id: artifacts
               uses: ./.github/actions/github-action-artifact-output
