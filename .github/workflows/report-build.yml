@@ -14,9 +14,13 @@ jobs:
             - uses: actions/checkout@v2
             - name: Get the artifact data for current run
               id: artifacts
-              uses: ./.github/actions/github-action-artifact-output
+              uses: fjorgemota/github-action-report-artifact@main
               with:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  artifact-name: sensei-lms-${{ github.sha }}.zip
+                  report-on: commit_status
+                  context: Plugin Download
+                  message: Click on "Details" to download the plugin build for this commit
             - name: Test output
               run: echo "Testing if URL appears '${{ fromJSON(steps.artifacts.outputs.artifacts_list)[0].url}}' with suffix"
                   
