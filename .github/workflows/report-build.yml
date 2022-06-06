@@ -29,5 +29,5 @@ jobs:
                   message: >
                     Howdy! Here's the list of files to download:
                     {{#each list}}
-                    - [{{ name }}]({{url)}});
+                    - [{{ name }}]({{url}});
                     {{/each}}
