@@ -27,7 +27,7 @@ jobs:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   report-on: pull_request
                   message: |
-                    Howdy! Here's the list of files to download:
+                    Howdy! Here's the list of files to download based on the commit {{ context.sha }}:
                     {{#each list}}
                     - [{{ name }}.zip]({{url}});
                     {{/each}}
