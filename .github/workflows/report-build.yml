@@ -22,7 +22,7 @@ jobs:
                   context: Plugin Build Download
                   message: Click on "Details" to download the plugin zip file
             - name: Publish comment with the link to download the plugin
-              uses: fjorgemota/github-action-report-artifact@v0
+              uses: fjorgemota/github-action-report-artifact@alpha
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   report-on: comment
