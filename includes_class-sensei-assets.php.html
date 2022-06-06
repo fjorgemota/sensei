@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Source: includes/class-sensei-feature-flags.php - Sensei LMS Hook Docs</title>
+	<title>Source: includes/class-sensei-assets.php - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Source: includes/class-sensei-feature-flags.php</h1>
+	<h1 class="page-title">Source: includes/class-sensei-assets.php</h1>
 	
 
 	
@@ -32,88 +32,331 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>&lt;?php
+/**
+ * Assets
+ * Handles script and stylesheet loading.
+ *
+ * @package Sensei\Assets
+ * @since   3.1.0
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
- * Class Sensei_Feature_Flags
- *
- * Check for enabled experimental features by running a filter for each
- * feature, overriden by defines. A feature flag can be enabled either by
- * defining a constant, or adding a filter.
- *
- * Example - the feature flag `my_experimental_feature` may be enabled in the
- * following ways:
- *
- * // Defining a constant:
- * `define( 'SENSEI_FEATURE_FLAG_MY_EXPERIMENTAL_FEATURE', true );`
- *
- * // Adding a filter:
- * `add_filter( 'sensei_feature_flag_my_experimental_feature', '__return_true' );`
+ * Sensei Assets
+ * Loading CSS and Javascript files.
  *
  * @package Core
+ * @author  Automattic
+ * @since   3.1.0
  */
-class Sensei_Feature_Flags {
+class Sensei_Assets {
 
 	/**
-	 * Feature flags.
+	 * The URL for the plugin.
 	 *
-	 * @var array
+	 * @var string
 	 */
-	private $feature_flags;
+	protected $plugin_url;
 
 	/**
-	 * Sensei_Feature_Flags constructor.
+	 * Plugin location.
+	 *
+	 * @var string
 	 */
-	public function __construct() {
-		$this->feature_flags = [];
+	protected $plugin_path;
+
+	/**
+	 * Plugin version.
+	 *
+	 * @var string
+	 */
+	protected $version;
+
+	/**
+	 * Plugin text domain.
+	 *
+	 * @var string
+	 */
+	protected $text_domain;
+
+	/**
+	 * Sensei_Assets constructor.
+	 *
+	 * @param string $plugin_url  The URL for the plugin.
+	 * @param string $plugin_path Plugin location.
+	 * @param string $version     Plugin version.
+	 * @param string $text_domain Plugin text domain.
+	 */
+	public function __construct( $plugin_url, $plugin_path, $version, $text_domain = 'sensei-lms' ) {
+		$this->plugin_url  = $plugin_url;
+		$this->plugin_path = $plugin_path;
+		$this->version     = $version;
+		$this->text_domain = $text_domain;
 	}
 
 	/**
-	 * Get default feature settings.
+	 * Enqueue a script or stylesheet with wp_enqueue_script/wp_enqueue_style.
 	 *
-	 * @return array Default feature settings.
+	 * @param string      $handle       Unique name of the asset.
+	 * @param string      $filename     The filename.
+	 * @param array       $dependencies Dependencies.
+	 * @param bool|string $args         In footer flag (script) or media type (style).
 	 */
-	private function get_default_feature_settings() {
-		/**
-		 * Filters the default feature flag settings.
-		 *
-		 * @since 3.13.3
-		 * @hook sensei_default_feature_flag_settings
-		 *
-		 * @param {array} $default_feature_flag_settings Default feature flag settings.
-		 *
-		 * @return {array} Default feature flag settings.
-		 */
-		return apply_filters(
-			'sensei_default_feature_flag_settings',
-			[
-				'enrolment_provider_tooltip' => false,
-			]
+	public function enqueue( $handle, $filename, $dependencies = [], $args = null ) {
+
+		$config = $this->asset_config( $filename, $dependencies, $args );
+		$this->call_wp( 'wp_enqueue', $handle, $config );
+
+	}
+
+	/**
+	 * Register a script or stylesheet with wp_register_script/wp_register_style.
+	 *
+	 * @param string|null $handle       Unique name of the asset.
+	 * @param string      $filename     The filename.
+	 * @param array       $dependencies Dependencies.
+	 * @param null        $args         Asset arguments.
+	 */
+	public function register( $handle, $filename, $dependencies = [], $args = null ) {
+		$config = $this->asset_config( $filename, $dependencies, $args );
+
+		$this->call_wp( 'wp_register', $handle, $config );
+	}
+
+	/**
+	 * Enqueue a registered script.
+	 *
+	 * @param string $handle Unique name of the script.
+	 */
+	public function enqueue_script( $handle ) {
+		wp_enqueue_script( $handle );
+	}
+
+	/**
+	 * Enqueue a registered stylesheet.
+	 *
+	 * @param string $handle Unique name of the stylesheet.
+	 */
+	public function enqueue_style( $handle ) {
+		wp_enqueue_style( $handle );
+	}
+
+	/**
+	 * Call the wrapped WordPress core function with _type postfix
+	 *
+	 * @param string $action wp_enqueue or wp_register.
+	 * @param string $handle Unique handle for the asset.
+	 * @param array  $config Asset information.
+	 */
+	private function call_wp( $action, $handle, $config ) {
+		call_user_func( $action . '_' . $config['type'], $handle, $config['url'], $config['dependencies'], $config['version'], $config['args'] );
+
+		if ( 'script' === $config['type'] &amp;&amp; in_array( 'wp-i18n', $config['dependencies'], true ) ) {
+			wp_set_script_translations( $handle, $this->text_domain );
+		}
+	}
+
+	/**
+	 * Builds asset metadata for a given file.
+	 * Loads dependencies and version hash tracked by the build process from [filename].asset.php
+	 *
+	 * @param string      $filename     The filename.
+	 * @param array       $dependencies Dependencies.
+	 * @param bool|string $args         Argument passed to wp_enqueue_script or wp_enqueue_style.
+	 *
+	 * @return array Asset information.
+	 */
+	public function asset_config( $filename, $dependencies = [], $args = null ) {
+
+		$is_js             = preg_match( '/\.js$/', $filename );
+		$basename          = preg_replace( '/\.\w+$/', '', $filename );
+		$url               = $this->asset_url( $filename );
+		$version           = $this->version;
+		$asset_config_path = $this->dist_path( $basename . '.asset.php' );
+
+		if ( file_exists( $asset_config_path ) ) {
+			$asset_config = require $asset_config_path;
+
+			// Only add generated dependencies for scripts.
+			if ( $is_js ) {
+				$dependencies = array_unique( array_merge( $dependencies, $asset_config['dependencies'] ) );
+			}
+			$version = $asset_config['version'];
+		}
+
+		return [
+			'url'          => $url,
+			'dependencies' => $dependencies,
+			'version'      => $version,
+			'type'         => $is_js ? 'script' : 'style',
+			'args'         => null !== $args ? $args : ( $is_js ? false : 'all' ), // defaults for wp_enqueue_script or wp_enqueue_style.
+		];
+	}
+
+	/**
+	 * Get path for file in plugin assets dist directory.
+	 *
+	 * @param string $file Asset file.
+	 *
+	 * @return string
+	 */
+	public function dist_path( $file ) {
+		return path_join( $this->plugin_path, 'assets/dist/' . $file );
+	}
+
+	/**
+	 * Get path for file in plugin assets source directory.
+	 *
+	 * @param string $file Asset file.
+	 *
+	 * @return string
+	 */
+	public function src_path( $file ) {
+		return path_join( $this->plugin_path, 'assets/' . $file );
+	}
+
+	/**
+	 * Construct public url for the file.
+	 *
+	 * @param string $filename The filename.
+	 *
+	 * @return string Public url for the file.
+	 */
+	public function asset_url( $filename ) {
+		return rtrim( $this->plugin_url, '/' ) . '/assets/dist/' . $filename;
+	}
+
+	/**
+	 * Preload the given REST routes and pass data to Javascript.
+	 *
+	 * @param string[] $rest_routes REST routes to preload.
+	 */
+	public function preload_data( $rest_routes ) {
+		// Temporarily removes the user filter when loading from preload.
+		remove_action( 'pre_get_posts', array( Sensei()->teacher, 'filter_queries' ) );
+		$preload_data = array_reduce(
+			$rest_routes,
+			'rest_preload_api_request',
+			[]
 		);
+		add_action( 'pre_get_posts', array( Sensei()->teacher, 'filter_queries' ) );
+
+		wp_add_inline_script(
+			'wp-api-fetch',
+			sprintf( 'wp.apiFetch.use( wp.apiFetch.createPreloadingMiddleware( %s ) );', wp_json_encode( $preload_data ) ),
+			'after'
+		);
+
 	}
 
 	/**
-	 * Checks if a feature is enabled.
+	 * Change implementation for an already registered script.
 	 *
-	 * @param string $feature
+	 * @param string $handle Name of the script to override.
+	 * @param string $src    New filename.
+	 * @param array  $deps   Specify to change script dependencies.
 	 *
-	 * @return bool
+	 * @since 3.3.1
+	 *
+	 * @deprecated 3.10.0
 	 */
-	public function is_enabled( $feature ) {
-		$feature                  = trim( strtolower( $feature ) );
-		$default_feature_settings = $this->get_default_feature_settings();
+	public function override_script( $handle, $src, $deps = null ) {
+		_deprecated_function( __METHOD__, '3.10.0' );
 
-		if ( ! isset( $default_feature_settings[ $feature ] ) ) {
-			return false;
+		$scripts = wp_scripts();
+		$script  = $scripts->query( $handle, 'registered' );
+
+		if ( $script ) {
+			$script->src = $this->asset_url( $src );
+			$script->ver = $this->version;
+
+			if ( null !== $deps ) {
+				$script->deps = $deps;
+			}
+		} else {
+			$this->register( $handle, $src, $deps );
 		}
+	}
 
-		$full_feature_name = 'sensei_feature_flag_' . $feature;
-		if ( ! isset( $this->feature_flags[ $feature ] ) ) {
-			$feature_define                  = strtoupper( $full_feature_name );
-			$value                           = defined( $feature_define ) ? (bool) constant( $feature_define ) : $default_feature_settings[ $feature ];
-			$this->feature_flags[ $feature ] = $value;
-		}
+	/**
+	 * Use bundled WordPress client libraries for older versions.
+	 *
+	 * @since 3.3.1
+	 *
+	 * @deprecated 3.10.0
+	 */
+	public function wp_compat() {
+		_deprecated_function( __METHOD__, '3.10.0' );
+	}
 
-		return (bool) apply_filters( $full_feature_name, $this->feature_flags[ $feature ] );
+
+	/**
+	 * Disable loading frontend.css for the current page.
+	 */
+	public function disable_frontend_styles() {
+		add_filter( 'sensei_disable_styles', '__return_true' );
+	}
+
+	/**
+	 * Gets the href to the file at assets/icons/&lt;name>.svg
+	 * inside a generated sprite.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @param string $name The name of the icon file at "assets/icons/&lt;name>.svg".
+	 *
+	 * @return string The icon href.
+	 */
+	private function get_icon_href( string $name ) : string {
+		$sprite_file = $this->plugin_url . 'assets/dist/icons/sensei-sprite.svg?v=' . $this->version;
+
+		/**
+		 * Filters the icon href for the svg.
+		 *
+		 * @since 4.4.0
+		 * @hook sensei_icon_href
+		 *
+		 * @param {string} $icon_href   The icon href.
+		 * @param {string} $sprite_file The sprite file URL.
+		 * @param {string} $name        The icon name.
+		 *
+		 * @return {string} The icon href.
+		 */
+		$icon_href = apply_filters( 'sensei_icon_href', "{$sprite_file}#sensei-sprite-{$name}", $sprite_file, $name );
+
+		return $icon_href;
+	}
+
+	/**
+	 * Gets SVG HTML from a generated sprite.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @param string $name        The name of the icon file at "assets/images/&lt;name>.svg".
+	 * @param string $class_names Classnames to add to the SVG element.
+	 *
+	 * @return string The SVG HTML.
+	 */
+	public function get_icon( string $name, string $class_names = '' ) : string {
+		$href = $this->get_icon_href( $name );
+
+		return '&lt;svg class="' . esc_attr( $class_names ) . '">&lt;use xlink:href="' . esc_url( $href ) . '">&lt;/use>&lt;/svg>';
+	}
+
+	/**
+	 * Gets image from assets.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param string $name    The name of the image file at "assets/images/&lt;name>".
+	 *
+	 * @return string Image path.
+	 */
+	public function get_image( string $name ) : string {
+		return $this->plugin_url . 'assets/dist/images/' . $name;
 	}
 }
 </code></pre>
