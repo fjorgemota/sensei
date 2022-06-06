@@ -93,6 +93,8 @@ require_once dirname( __FILE__ ) . '/includes/class-sensei-bootstrap.php';
 
 Sensei_Bootstrap::get_instance()->bootstrap();
 
+// Does this change appear in the final bundle?
+
 if ( ! function_exists( 'Sensei' ) ) {
 	/**
 	 * Returns the global Sensei Instance.
