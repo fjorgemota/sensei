@@ -50,3 +50,9 @@ jobs:
                   name: sensei-lms-${{ github.event.pull_request.head.sha }}
                   path: ${{ github.workspace }}/sensei-lms/
                   retention-days: 7
+            - name: Store Artifact 2
+              uses: actions/upload-artifact@v2
+              with:
+                  name: sensei-xpto-${{ github.event.pull_request.head.sha }}
+                  path: ${{ github.workspace }}/sensei-lms/
+                  retention-days: 7
