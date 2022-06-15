@@ -93,6 +93,7 @@ require_once dirname( __FILE__ ) . '/includes/class-sensei-bootstrap.php';
 
 Sensei_Bootstrap::get_instance()->bootstrap();
 
+// Hello world
 if ( ! function_exists( 'Sensei' ) ) {
 	/**
 	 * Returns the global Sensei Instance.
