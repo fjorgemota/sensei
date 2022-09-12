@@ -374,7 +374,7 @@ class Sensei_Lesson {
 		&lt;div class="sensei-content-drip-promo">
 			&lt;div class="sensei-content-drip-promo__descriptions">
 				&lt;p>&lt;?php esc_html_e( 'Keep students engaged and improve knowledge retention by setting a delivery schedule for course content.', 'sensei-lms' ); ?>&lt;/p>
-				&lt;p>&lt;a href="https://senseilms.com/pricing/?utm_source=plugin_sensei&amp;utm_medium=upsell&amp;utm_campaign=lesson_content_drip" target="_blank">&lt;?php esc_html_e( 'Upgrade to Sensei Pro', 'sensei-lms' ); ?>&lt;/a>&lt;/p>
+				&lt;p>&lt;a href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&amp;utm_medium=upsell&amp;utm_campaign=lesson_content_drip" target="_blank">&lt;?php esc_html_e( 'Upgrade to Sensei Pro', 'sensei-lms' ); ?>&lt;/a>&lt;/p>
 			&lt;/div>
 
 			&lt;div class="sensei-content-drip-promo__preview">
@@ -669,7 +669,7 @@ class Sensei_Lesson {
 	public function meta_box_save( $post_id ) {
 
 		// Verify the nonce before proceeding.
-		if ( ( get_post_type( $post_id ) != $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_nonce' ] ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
+		if ( ( get_post_type( $post_id ) !== $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_nonce' ] ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
 			return $post_id;
 		}
 		// Get the post type object.
@@ -703,6 +703,27 @@ class Sensei_Lesson {
 
 			}
 		}
+
+		$new_pass_required     = isset( $_POST['pass_required'] ) ? sanitize_text_field( wp_unslash( $_POST['pass_required'] ) ) : '-1';
+		$new_pass_percentage   = isset( $_POST['quiz_passmark'] ) ? sanitize_text_field( wp_unslash( $_POST['quiz_passmark'] ) ) : '-1';
+		$new_enable_quiz_reset = isset( $_POST['enable_quiz_reset'] ) ? sanitize_text_field( wp_unslash( $_POST['enable_quiz_reset'] ) ) : '-1';
+		$show_questions        = isset( $_POST['show_questions'] ) ? sanitize_text_field( wp_unslash( $_POST['show_questions'] ) ) : '-1';
+		$random_question_order = isset( $_POST['random_question_order'] ) ? sanitize_text_field( wp_unslash( $_POST['random_question_order'] ) ) : '-1';
+		$quiz_grade_type       = isset( $_POST['quiz_grade_type'] ) ? sanitize_text_field( wp_unslash( $_POST['quiz_grade_type'] ) ) : '-1';
+
+		$new_settings = array(
+			'pass_required'         => $new_pass_required,
+			'pass_percentage'       => $new_pass_percentage,
+			'enable_quiz_reset'     => $new_enable_quiz_reset,
+			'show_questions'        => $show_questions,
+			'random_question_order' => $random_question_order,
+			'quiz_grade_type'       => $quiz_grade_type,
+		);
+
+		$this->save_quiz_settings( $post_id, $new_settings );
+
+		return $post_id;
+
 	}
 
 	/**
@@ -898,7 +919,7 @@ class Sensei_Lesson {
 	 *
 	 * @access private
 	 *
-	 * @param  {string} $field Field name.
+	 * @param  {array} $field Field description, see Sensei_Lesson::get_quiz_settings() for more information.
 	 *
 	 * @return string|null
 	 */
@@ -2503,6 +2524,7 @@ class Sensei_Lesson {
 	 * Enqueue legacy meta box quiz editor assets.
 	 */
 	private function enqueue_scripts_meta_box_quiz_editor() {
+
 		wp_enqueue_media();
 
 		// Load the lessons script.
@@ -2630,7 +2652,7 @@ class Sensei_Lesson {
 
 		// Make sure other sensei columns stay directly behind the new columns.
 		$other_sensei_columns = [
-			'module',
+			'modules',
 		];
 		foreach ( $other_sensei_columns as $column_key ) {
 			if ( isset( $defaults[ $column_key ] ) ) {
@@ -3623,7 +3645,8 @@ class Sensei_Lesson {
 				// Get number of questions to show.
 				$show_questions = (int) get_post_meta( $quiz_id, '_show_questions', true );
 
-				if ( $show_questions ) {
+				// Negative amount is considered as All (same as zero).
+				if ( $show_questions > 0 ) {
 					// Get random set of array keys from selected questions array.
 					$selected_questions = array_rand(
 						$questions_array,
@@ -3764,7 +3787,7 @@ class Sensei_Lesson {
 				 * @param {string} $html HTML for the lesson placeholder image.
 				 * @return {string} HTML for the lesson placeholder image.
 				 */
-				$img_element = apply_filters( 'sensei_lesson_placeholder_image_url', '&lt;img src="http://placehold.it/' . esc_url( $width ) . 'x' . esc_url( $height ) . '" class="woo-image thumbnail alignleft" />' );
+				$img_element = apply_filters( 'sensei_lesson_placeholder_image_url', '&lt;img src="//via.placeholder.com/' . esc_url( $width ) . 'x' . esc_url( $height ) . '" class="woo-image thumbnail alignleft" />' );
 
 			}
 		}
@@ -3824,7 +3847,7 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * Returns the course for a given lesson
+	 * Returns the course ID for a given lesson
 	 *
 	 * @since 1.7.4
 	 * @access public
@@ -3853,6 +3876,58 @@ class Sensei_Lesson {
 
 		return $lesson_course_id;
 
+	}
+
+	/**
+	 * Returns the course ID for a given set of lessons (with the key being the lesson ID)
+	 *
+	 * @since 4.5.2
+	 * @access public
+	 *
+	 * @param array&lt;int> $lesson_ids Array of Lesson IDs.
+	 * @return array&lt;int, int|false> Array where the key is the lesson ID, and the value is the course ID (or false if not found)
+	 */
+	public function get_course_ids( $lesson_ids ) {
+		global $wpdb;
+
+		if ( empty( $lesson_ids ) ) {
+			return [];
+		}
+
+		sort( $lesson_ids, SORT_NUMERIC );
+		$lesson_ids = array_unique( $lesson_ids, SORT_NUMERIC );
+
+		$cache_key     = 'lesson/get-course-ids/' . md5( implode( ',', $lesson_ids ) );
+		$cache_group   = 'sensei/temporary';
+		$cached_result = wp_cache_get( $cache_key, $cache_group );
+		if ( false !== $cached_result ) {
+			return $cached_result;
+		}
+		$courses_by_lesson = array_fill_keys( $lesson_ids, false );
+		$placeholders      = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+		$query = $wpdb->prepare(
+			"
+				SELECT lesson.ID AS lesson_id, course.ID AS course_id FROM {$wpdb->posts} lesson
+					INNER JOIN {$wpdb->postmeta} AS lesson_meta ON lesson_meta.post_id=lesson.ID AND lesson_meta.meta_key='_lesson_course'
+					INNER JOIN {$wpdb->posts} AS course ON course.ID = lesson_meta.meta_value AND course.post_type='course'
+					WHERE lesson.ID in ({$placeholders})
+				  		AND lesson.post_type='lesson'
+		",
+			$lesson_ids
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.PreparedSQL.NotPrepared
+		$results = $wpdb->get_results( $query );
+		if ( is_array( $results ) ) {
+			foreach ( $results as $result ) {
+				$courses_by_lesson[ $result->lesson_id ] = $result->course_id;
+			}
+			wp_cache_set( $cache_key, $courses_by_lesson, $cache_group, 60 );
+		}
+		return $courses_by_lesson;
 	}
 
 	/**
@@ -3935,55 +4010,101 @@ class Sensei_Lesson {
 
 					&lt;h4>&lt;?php esc_html_e( 'Quiz Settings', 'sensei-lms' ); ?> &lt;/h4>
 
-					&lt;?php
+				&lt;?php
 
-					//
-					// Lesson require pass to complete
-					//
-					$pass_required_options = array(
-						'-1' => $no_change_text,
-						'0'  => esc_html__( 'No', 'sensei-lms' ),
-						'1'  => esc_html__( 'Yes', 'sensei-lms' ),
-					);
+				//
+				// Lesson require pass to complete
+				//
+				$pass_required_options = array(
+					'-1' => $no_change_text,
+					'0'  => esc_html__( 'No', 'sensei-lms' ),
+					'1'  => esc_html__( 'Yes', 'sensei-lms' ),
+				);
 
-					$pass_required_select_attributes = array(
-						'name'  => 'pass_required',
-						'id'    => 'sensei-edit-lesson-pass-required',
-						'class' => ' ',
-					);
-					$require_pass_field              = Sensei_Utils::generate_drop_down( '-1', $pass_required_options, $pass_required_select_attributes, false );
+				$pass_required_select_attributes = array(
+					'name'  => 'pass_required',
+					'id'    => 'sensei-edit-lesson-pass-required',
+					'class' => ' ',
+				);
+				$require_pass_field              = Sensei_Utils::generate_drop_down( '-1', $pass_required_options, $pass_required_select_attributes, false );
 
-					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
-					echo $this->generate_all_lessons_edit_field( esc_html__( 'Pass required', 'sensei-lms' ), $require_pass_field );
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+				echo $this->generate_all_lessons_edit_field( esc_html__( 'Pass required', 'sensei-lms' ), $require_pass_field );
 
-					//
-					// Quiz pass percentage
-					//
-					$quiz_pass_percentage_field = '&lt;input name="quiz_passmark" id="sensei-edit-quiz-pass-percentage" type="number" />';
+				//
+				// Quiz pass percentage
+				//
+				$quiz_pass_percentage_field = '&lt;input name="quiz_passmark" id="sensei-edit-quiz-pass-percentage" type="number" />';
 
-					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
-					echo $this->generate_all_lessons_edit_field( esc_html__( 'Pass Percentage', 'sensei-lms' ), $quiz_pass_percentage_field );
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+				echo $this->generate_all_lessons_edit_field( esc_html__( 'Pass Percentage', 'sensei-lms' ), $quiz_pass_percentage_field );
 
-					//
-					// Enable quiz reset button
-					//
-					$quiz_reset_select__options   = array(
-						'-1' => $no_change_text,
-						'0'  => esc_html__( 'No', 'sensei-lms' ),
-						'1'  => esc_html__( 'Yes', 'sensei-lms' ),
-					);
-					$quiz_reset_name_id           = 'sensei-edit-enable-quiz-reset';
-					$quiz_reset_select_attributes = array(
-						'name'  => 'enable_quiz_reset',
-						'id'    => $quiz_reset_name_id,
-						'class' => ' ',
-					);
-					$quiz_reset_field             = Sensei_Utils::generate_drop_down( '-1', $quiz_reset_select__options, $quiz_reset_select_attributes, false );
+				//
+				// Enable quiz reset button
+				//
+				$quiz_reset_select__options   = array(
+					'-1' => $no_change_text,
+					'0'  => esc_html__( 'No', 'sensei-lms' ),
+					'1'  => esc_html__( 'Yes', 'sensei-lms' ),
+				);
+				$quiz_reset_name_id           = 'sensei-edit-enable-quiz-reset';
+				$quiz_reset_select_attributes = array(
+					'name'  => 'enable_quiz_reset',
+					'id'    => $quiz_reset_name_id,
+					'class' => ' ',
+				);
+				$quiz_reset_field             = Sensei_Utils::generate_drop_down( '-1', $quiz_reset_select__options, $quiz_reset_select_attributes, false );
 
-					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
-					echo $this->generate_all_lessons_edit_field( esc_html__( 'Enable quiz reset button', 'sensei-lms' ), $quiz_reset_field );
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+				echo $this->generate_all_lessons_edit_field( esc_html__( 'Enable quiz reset button', 'sensei-lms' ), $quiz_reset_field );
 
-					?>
+				/*
+				/* Number of questions to show
+				*/
+				$show_questions_field = '&lt;input name="show_questions" id="sensei-edit-show-questions" type="number" />';
+
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+				echo $this->generate_all_lessons_edit_field( esc_html__( 'Number of questions to show', 'sensei-lms' ), $show_questions_field );
+
+				/*
+				/* Randomise question order
+				*/
+				$random_question_order_options = array(
+					'-1' => $no_change_text,
+					'0'  => esc_html__( 'No', 'sensei-lms' ),
+					'1'  => esc_html__( 'Yes', 'sensei-lms' ),
+				);
+
+				$random_question_order_select_attributes = array(
+					'name'  => 'random_question_order',
+					'id'    => 'sensei-edit-random-question-order',
+					'class' => ' ',
+				);
+				$random_question_order_field             = Sensei_Utils::generate_drop_down( '-1', $random_question_order_options, $random_question_order_select_attributes, false );
+
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+				echo $this->generate_all_lessons_edit_field( esc_html__( 'Randomise question order', 'sensei-lms' ), $random_question_order_field );
+
+				/*
+				/* Grade quiz automatically
+				*/
+				$grade_quiz_automatically_options = array(
+					'-1' => $no_change_text,
+					'0'  => esc_html__( 'No', 'sensei-lms' ),
+					'1'  => esc_html__( 'Yes', 'sensei-lms' ),
+				);
+
+				$grade_quiz_automatically_select_attributes = array(
+					'name'  => 'quiz_grade_type',
+					'id'    => 'sensei-edit-quiz-grade-type',
+					'class' => ' ',
+				);
+				$grade_quiz_automatically_field             = Sensei_Utils::generate_drop_down( '-1', $grade_quiz_automatically_options, $grade_quiz_automatically_select_attributes, false );
+
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+				echo $this->generate_all_lessons_edit_field( esc_html__( 'Grade quiz automatically', 'sensei-lms' ), $grade_quiz_automatically_field );
+
+				?>
 			&lt;/div>
 		&lt;/fieldset>
 		&lt;?php
@@ -4003,11 +4124,12 @@ class Sensei_Lesson {
 	public function generate_all_lessons_edit_field( $title, $field ) {
 
 		$html  = '';
-		$html  = '&lt;div class="inline-edit-group" >';
+		$html  = '&lt;div class="inline-edit-group sensei-quiz-settings" >';
 		$html .= '&lt;span class="title">' . esc_html( $title ) . '&lt;/span> ';
 		$html .= '&lt;span class="input-text-wrap">';
 		$html .= $field;
 		$html .= '&lt;/span>';
+
 		$html .= '&lt;/div>';
 
 		return wp_kses(
@@ -4043,63 +4165,44 @@ class Sensei_Lesson {
 	function save_all_lessons_edit_fields() {
 
 		// verify all the data before attempting to save
-		if ( ! isset( $_POST['security'] ) || ! check_ajax_referer( 'bulk-edit-lessons', 'security' )
-			|| empty( $_POST['post_ids'] ) || ! is_array( $_POST['post_ids'] ) ) {
+		if ( ! isset( $_POST['security'] ) || ! check_ajax_referer( 'bulk-edit-lessons', 'security' ) || empty( $_POST['post_ids'] ) || ! is_array( $_POST['post_ids'] ) ) {
 			die();
 		}
 
 		// get our variables
-		$new_course            = sanitize_text_field( $_POST['sensei_edit_lesson_course'] );
-		$new_complexity        = sanitize_text_field( $_POST['sensei_edit_complexity'] );
-		$new_pass_required     = sanitize_text_field( $_POST['sensei_edit_pass_required'] );
-		$new_pass_percentage   = sanitize_text_field( $_POST['sensei_edit_pass_percentage'] );
-		$new_enable_quiz_reset = sanitize_text_field( $_POST['sensei_edit_enable_quiz_reset'] );
-		// store the values for all selected posts
+		$new_course            = isset( $_POST['sensei_edit_lesson_course'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_lesson_course'] ) ) : '';
+		$new_complexity        = isset( $_POST['sensei_edit_complexity'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_complexity'] ) ) : '';
+		$new_pass_required     = isset( $_POST['sensei_edit_pass_required'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_pass_required'] ) ) : '';
+		$new_pass_percentage   = isset( $_POST['sensei_edit_pass_percentage'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_pass_percentage'] ) ) : '';
+		$new_enable_quiz_reset = isset( $_POST['sensei_edit_enable_quiz_reset'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_enable_quiz_reset'] ) ) : '';
+		$show_questions        = isset( $_POST['sensei_edit_show_questions'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_show_questions'] ) ) : '';
+		$random_question_order = isset( $_POST['sensei_edit_random_question_order'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_random_question_order'] ) ) : '';
+		$quiz_grade_type       = isset( $_POST['sensei_edit_quiz_grade_type'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_quiz_grade_type'] ) ) : '';
+		// store the values for all selected posts.
 		foreach ( $_POST['post_ids'] as $lesson_id ) {
-
-			// get the quiz id needed for the quiz meta
-			$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 			// do not save the items if the value is -1 as this
 			// means it was not changed
 			// update lesson course
-			if ( -1 != $new_course ) {
+			if ( - 1 !== $new_course ) {
 				update_post_meta( $lesson_id, '_lesson_course', $new_course );
 			}
 			// update lesson complexity
-			if ( -1 != $new_complexity ) {
+			if ( -1 !== $new_complexity ) {
 				update_post_meta( $lesson_id, '_lesson_complexity', $new_complexity );
 			}
 
-			// Quiz Related settings
-			if ( isset( $quiz_id ) &amp;&amp; 0 &lt; intval( $quiz_id ) ) {
+			$new_settings = array(
+				'pass_required'         => $new_pass_required,
+				'pass_percentage'       => $new_pass_percentage,
+				'enable_quiz_reset'     => $new_enable_quiz_reset,
+				'show_questions'        => $show_questions,
+				'random_question_order' => $random_question_order,
+				'quiz_grade_type'       => $quiz_grade_type,
+			);
 
-				// update pass required
-				if ( -1 != $new_pass_required ) {
+			$this->save_quiz_settings( $lesson_id, $new_settings );
 
-					$checked = $new_pass_required ? 'on' : '';
-					update_post_meta( $quiz_id, '_pass_required', $checked );
-					unset( $checked );
-				}
-
-				// update pass percentage
-				if ( ! empty( $new_pass_percentage ) &amp;&amp; is_numeric( $new_pass_percentage ) ) {
-
-						update_post_meta( $quiz_id, '_quiz_passmark', $new_pass_percentage );
-
-				}
-
-				//
-				// update enable quiz reset
-				//
-				if ( -1 != $new_enable_quiz_reset ) {
-
-					$checked = $new_enable_quiz_reset ? 'on' : '';
-					update_post_meta( $quiz_id, '_enable_quiz_reset', $checked );
-					unset( $checked );
-
-				}
-			}
 		}
 
 		die();
@@ -4785,7 +4888,7 @@ class Sensei_Lesson {
 	public static function user_lesson_quiz_status_message( $lesson_id = 0, $user_id = 0 ) {
 
 		$lesson_id                 = empty( $lesson_id ) ? get_the_ID() : $lesson_id;
-		$user_id                   = empty( $lesson_id ) ? get_current_user_id() : $user_id;
+		$user_id                   = empty( $user_id ) ? get_current_user_id() : $user_id;
 		$lesson_course_id          = (int) get_post_meta( $lesson_id, '_lesson_course', true );
 		$quiz_id                   = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		$has_user_completed_lesson = Sensei_Utils::user_completed_lesson( intval( $lesson_id ), $user_id );
@@ -5052,6 +5155,68 @@ class Sensei_Lesson {
 
 		return false;
 	}
+
+	/**
+	 *
+	 * Saves the quiz post meta settings
+	 *
+	 * @param int|null $lesson_id ID if the lesson.
+	 * @param array    $new_settings New settings to be saved.
+	 */
+	private function save_quiz_settings( $lesson_id, array $new_settings ) {
+
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+
+		if ( isset( $quiz_id ) &amp;&amp; 0 &lt; intval( $quiz_id ) ) {
+
+			// update pass required.
+			if ( - 1 !== $new_settings['pass_required'] ) {
+
+				$checked = $new_settings['pass_required'] ? 'on' : 'off';
+				update_post_meta( $quiz_id, '_pass_required', $checked );
+				unset( $checked );
+			}
+
+			// update pass percentage.
+			if ( ! empty( $new_settings['pass_percentage'] ) &amp;&amp; '-1' !== $new_settings['pass_percentage'] &amp;&amp; is_numeric( $new_settings['pass_percentage'] ) ) {
+
+				update_post_meta( $quiz_id, '_quiz_passmark', $new_settings['pass_percentage'] );
+
+			}
+
+			// update enable quiz reset.
+			if ( - 1 !== $new_settings['enable_quiz_reset'] ) {
+
+				$checked = $new_settings['enable_quiz_reset'] ? 'on' : '';
+				update_post_meta( $quiz_id, '_enable_quiz_reset', $checked );
+				unset( $checked );
+
+			}
+
+			// update random question order.
+			if ( - 1 !== $new_settings['random_question_order'] ) {
+
+				$checked = $new_settings['random_question_order'] ? 'yes' : 'no';
+				update_post_meta( $quiz_id, '_random_question_order', $checked );
+				unset( $checked );
+			}
+
+			// update quiz grade type.
+			if ( - 1 !== $new_settings['quiz_grade_type'] ) {
+
+				$checked = $new_settings['quiz_grade_type'] ? 'auto' : 'manual';
+				update_post_meta( $quiz_id, '_quiz_grade_type', $checked );
+				unset( $checked );
+			}
+
+			// update number of questions to show.
+			if ( ! empty( $new_settings['show_questions'] ) &amp;&amp; '-1' !== $new_settings['show_questions'] ) {
+
+				update_post_meta( $quiz_id, '_show_questions', $new_settings['show_questions'] );
+
+			}
+		}
+	}
 }
 
 /**
@@ -5078,7 +5243,7 @@ class WooThemes_Sensei_Lesson extends Sensei_Lesson{}
 </div>
 
 <nav>
-	<h2><a href="index.html">Home</a></h2><h3>Actions</h3><ul><li><a href="sensei_course_learning_mode_load_override_styles.html">sensei_course_learning_mode_load_override_styles</a></li><li><a href="sensei_course_learning_mode_load_theme.html">sensei_course_learning_mode_load_theme</a></li><li><a href="sensei_course_learning_mode_override_theme.html">sensei_course_learning_mode_override_theme</a></li><li><a href="sensei_data_port_complete.html">sensei_data_port_complete</a></li><li><a href="sensei_loaded.html">sensei_loaded</a></li><li><a href="sensei_rest_api_category_question_saved.html">sensei_rest_api_category_question_saved</a></li><li><a href="sensei_rest_api_lesson_quiz_update.html">sensei_rest_api_lesson_quiz_update</a></li><li><a href="sensei_rest_api_question_saved.html">sensei_rest_api_question_saved</a></li><li><a href="sensei_tools_listing_after_%257B$tool_id%257D.html">sensei_tools_listing_after_{$tool_id}</a></li></ul><h3>Filters</h3><ul><li><a href="sensei_add_comment_indexes.html">sensei_add_comment_indexes</a></li><li><a href="sensei_admin_notices.html">sensei_admin_notices</a></li><li><a href="sensei_analysis_nav_title.html">sensei_analysis_nav_title</a></li><li><a href="sensei_analysis_sub_menu.html">sensei_analysis_sub_menu</a></li><li><a href="sensei_block_type_args.html">sensei_block_type_args</a></li><li><a href="sensei_can_access_course_content.html">sensei_can_access_course_content</a></li><li><a href="sensei_context_notices.html">sensei_context_notices</a></li><li><a href="sensei_course_block_template.html">sensei_course_block_template</a></li><li><a href="sensei_course_completed_page_template.html">sensei_course_completed_page_template</a></li><li><a href="sensei_course_completed_page_url.html">sensei_course_completed_page_url</a></li><li><a href="sensei_course_learning_mode_enabled.html">sensei_course_learning_mode_enabled</a></li><li><a href="sensei_course_learning_mode_theme_override_enabled.html">sensei_course_learning_mode_theme_override_enabled</a></li><li><a href="sensei_course_loop_content_class.html">sensei_course_loop_content_class</a></li><li><a href="sensei_custom_navigation_allowed_screens.html">sensei_custom_navigation_allowed_screens</a></li><li><a href="sensei_default_feature_flag_settings.html">sensei_default_feature_flag_settings</a></li><li><a href="sensei_duplicate_post_args.html">sensei_duplicate_post_args</a></li><li><a href="sensei_duplicate_post_ignore_meta.html">sensei_duplicate_post_ignore_meta</a></li><li><a href="sensei_existing_questions_query_results.html">sensei_existing_questions_query_results</a></li><li><a href="sensei_file_upload_file_prefix.html">sensei_file_upload_file_prefix</a></li><li><a href="sensei_filter_category_questions_by_author.html">sensei_filter_category_questions_by_author</a></li><li><a href="sensei_get_question_grade.html">sensei_get_question_grade</a></li><li><a href="sensei_get_question_template_data.html">sensei_get_question_template_data</a></li><li><a href="sensei_grading_display_quiz_question.html">sensei_grading_display_quiz_question</a></li><li><a href="sensei_icon_href.html">sensei_icon_href</a></li><li><a href="sensei_import_csv_delimiter.html">sensei_import_csv_delimiter</a></li><li><a href="sensei_import_csv_delimiter_options.html">sensei_import_csv_delimiter_options</a></li><li><a href="sensei_is_login_required.html">sensei_is_login_required</a></li><li><a href="sensei_learner_courses_page_template.html">sensei_learner_courses_page_template</a></li><li><a href="sensei_learner_enrolled_courses_args.html">sensei_learner_enrolled_courses_args</a></li><li><a href="sensei_lesson_archive_title.html">sensei_lesson_archive_title</a></li><li><a href="sensei_lesson_block_template.html">sensei_lesson_block_template</a></li><li><a href="sensei_lesson_content_drip_hide.html">sensei_lesson_content_drip_hide</a></li><li><a href="sensei_lesson_count.html">sensei_lesson_count</a></li><li><a href="sensei_lesson_course_signup_notice_level.html">sensei_lesson_course_signup_notice_level</a></li><li><a href="sensei_lesson_course_signup_notice_message.html">sensei_lesson_course_signup_notice_message</a></li><li><a href="sensei_lesson_excerpt.html">sensei_lesson_excerpt</a></li><li><a href="sensei_lesson_placeholder_image_url.html">sensei_lesson_placeholder_image_url</a></li><li><a href="sensei_lesson_prerequisite.html">sensei_lesson_prerequisite</a></li><li><a href="sensei_lesson_quiz_questions.html">sensei_lesson_quiz_questions</a></li><li><a href="sensei_lesson_show_course_signup_notice.html">sensei_lesson_show_course_signup_notice</a></li><li><a href="sensei_lesson_take_course_url.html">sensei_lesson_take_course_url</a></li><li><a href="sensei_login_success_redirect_url.html">sensei_login_success_redirect_url</a></li><li><a href="sensei_login_url.html">sensei_login_url</a></li><li><a href="sensei_module_course_column_max_links_count.html">sensei_module_course_column_max_links_count</a></li><li><a href="sensei_question_answer_message_correct_answer.html">sensei_question_answer_message_correct_answer</a></li><li><a href="sensei_question_answer_message_css_class.html">sensei_question_answer_message_css_class</a></li><li><a href="sensei_question_answer_message_grade.html">sensei_question_answer_message_grade</a></li><li><a href="sensei_question_answer_message_text.html">sensei_question_answer_message_text</a></li><li><a href="sensei_question_answer_notes.html">sensei_question_answer_notes</a></li><li><a href="sensei_question_image_size.html">sensei_question_image_size</a></li><li><a href="sensei_question_show_answers.html">sensei_question_show_answers</a></li><li><a href="sensei_question_title.html">sensei_question_title</a></li><li><a href="sensei_question_type_specific_properties.html">sensei_question_type_specific_properties</a></li><li><a href="sensei_question_types.html">sensei_question_types</a></li><li><a href="sensei_questions_get_correct_answer.html">sensei_questions_get_correct_answer</a></li><li><a href="sensei_quiz_answer_file_upload_types.html">sensei_quiz_answer_file_upload_types</a></li><li><a href="sensei_quiz_enable_block_based_editor.html">sensei_quiz_enable_block_based_editor</a></li><li><a href="sensei_quiz_ordering_question_type_hide.html">sensei_quiz_ordering_question_type_hide</a></li><li><a href="sensei_quiz_pagination_args.html">sensei_quiz_pagination_args</a></li><li><a href="sensei_quiz_panel_add.html">sensei_quiz_panel_add</a></li><li><a href="sensei_quiz_settings.html">sensei_quiz_settings</a></li><li><a href="sensei_registration_url.html">sensei_registration_url</a></li><li><a href="sensei_rest_api_lesson_quiz_response.html">sensei_rest_api_lesson_quiz_response</a></li><li><a href="sensei_rest_api_schema_question_type.html">sensei_rest_api_schema_question_type</a></li><li><a href="sensei_rest_api_schema_single_question.html">sensei_rest_api_schema_single_question</a></li><li><a href="sensei_scripts_allowed_pages.html">sensei_scripts_allowed_pages</a></li><li><a href="sensei_scripts_allowed_post_type_pages.html">sensei_scripts_allowed_post_type_pages</a></li><li><a href="sensei_scripts_allowed_post_types.html">sensei_scripts_allowed_post_types</a></li><li><a href="sensei_show_enrolment_debug_button.html">sensei_show_enrolment_debug_button</a></li><li><a href="sensei_show_lesson_numbers.html">sensei_show_lesson_numbers</a></li><li><a href="sensei_the_question_number.html">sensei_the_question_number</a></li><li><a href="sensei_tools.html">sensei_tools</a></li><li><a href="sensei_user_courses_filter_options.html">sensei_user_courses_filter_options</a></li><li><a href="sensei_user_courses_query.html">sensei_user_courses_query</a></li></ul>
+	<h2><a href="index.html">Home</a></h2><h3>Actions</h3><ul><li><a href="sensei_course_learning_mode_load_override_styles.html">sensei_course_learning_mode_load_override_styles</a></li><li><a href="sensei_course_learning_mode_load_theme.html">sensei_course_learning_mode_load_theme</a></li><li><a href="sensei_course_learning_mode_override_theme.html">sensei_course_learning_mode_override_theme</a></li><li><a href="sensei_data_port_complete.html">sensei_data_port_complete</a></li><li><a href="sensei_loaded.html">sensei_loaded</a></li><li><a href="sensei_login_success_redirect_url.html">sensei_login_success_redirect_url</a></li><li><a href="sensei_reports_overview_after_top_filters.html">sensei_reports_overview_after_top_filters</a></li><li><a href="sensei_reports_overview_before_top_filters.html">sensei_reports_overview_before_top_filters</a></li><li><a href="sensei_reports_overview_students_data_provider_pre_user_query.html">sensei_reports_overview_students_data_provider_pre_user_query</a></li><li><a href="sensei_rest_api_category_question_saved.html">sensei_rest_api_category_question_saved</a></li><li><a href="sensei_rest_api_lesson_quiz_update.html">sensei_rest_api_lesson_quiz_update</a></li><li><a href="sensei_rest_api_question_saved.html">sensei_rest_api_question_saved</a></li><li><a href="sensei_tools_listing_after_%257B$tool_id%257D.html">sensei_tools_listing_after_{$tool_id}</a></li></ul><h3>Filters</h3><ul><li><a href="sensei_add_comment_indexes.html">sensei_add_comment_indexes</a></li><li><a href="sensei_admin_notices.html">sensei_admin_notices</a></li><li><a href="sensei_analysis_nav_title.html">sensei_analysis_nav_title</a></li><li><a href="sensei_analysis_sub_menu.html">sensei_analysis_sub_menu</a></li><li><a href="sensei_block_type_args.html">sensei_block_type_args</a></li><li><a href="sensei_can_access_course_content.html">sensei_can_access_course_content</a></li><li><a href="sensei_can_use_users_relationship.html">sensei_can_use_users_relationship</a></li><li><a href="sensei_context_notices.html">sensei_context_notices</a></li><li><a href="sensei_course_block_template.html">sensei_course_block_template</a></li><li><a href="sensei_course_completed_page_template.html">sensei_course_completed_page_template</a></li><li><a href="sensei_course_completed_page_url.html">sensei_course_completed_page_url</a></li><li><a href="sensei_course_learning_mode_enabled.html">sensei_course_learning_mode_enabled</a></li><li><a href="sensei_course_learning_mode_theme_override_enabled.html">sensei_course_learning_mode_theme_override_enabled</a></li><li><a href="sensei_course_loop_content_class.html">sensei_course_loop_content_class</a></li><li><a href="sensei_custom_navigation_allowed_screens.html">sensei_custom_navigation_allowed_screens</a></li><li><a href="sensei_default_feature_flag_settings.html">sensei_default_feature_flag_settings</a></li><li><a href="sensei_duplicate_post_args.html">sensei_duplicate_post_args</a></li><li><a href="sensei_duplicate_post_ignore_meta.html">sensei_duplicate_post_ignore_meta</a></li><li><a href="sensei_existing_questions_query_results.html">sensei_existing_questions_query_results</a></li><li><a href="sensei_file_upload_file_prefix.html">sensei_file_upload_file_prefix</a></li><li><a href="sensei_filter_category_questions_by_author.html">sensei_filter_category_questions_by_author</a></li><li><a href="sensei_get_question_grade.html">sensei_get_question_grade</a></li><li><a href="sensei_get_question_template_data.html">sensei_get_question_template_data</a></li><li><a href="sensei_grading_display_quiz_question.html">sensei_grading_display_quiz_question</a></li><li><a href="sensei_icon_href.html">sensei_icon_href</a></li><li><a href="sensei_import_csv_delimiter.html">sensei_import_csv_delimiter</a></li><li><a href="sensei_import_csv_delimiter_options.html">sensei_import_csv_delimiter_options</a></li><li><a href="sensei_is_login_required.html">sensei_is_login_required</a></li><li><a href="sensei_learner_courses_page_template.html">sensei_learner_courses_page_template</a></li><li><a href="sensei_learner_enrolled_courses_args.html">sensei_learner_enrolled_courses_args</a></li><li><a href="sensei_lesson_archive_title.html">sensei_lesson_archive_title</a></li><li><a href="sensei_lesson_block_template.html">sensei_lesson_block_template</a></li><li><a href="sensei_lesson_content_drip_hide.html">sensei_lesson_content_drip_hide</a></li><li><a href="sensei_lesson_count.html">sensei_lesson_count</a></li><li><a href="sensei_lesson_course_signup_notice_level.html">sensei_lesson_course_signup_notice_level</a></li><li><a href="sensei_lesson_course_signup_notice_message.html">sensei_lesson_course_signup_notice_message</a></li><li><a href="sensei_lesson_excerpt.html">sensei_lesson_excerpt</a></li><li><a href="sensei_lesson_placeholder_image_url.html">sensei_lesson_placeholder_image_url</a></li><li><a href="sensei_lesson_prerequisite.html">sensei_lesson_prerequisite</a></li><li><a href="sensei_lesson_quiz_questions.html">sensei_lesson_quiz_questions</a></li><li><a href="sensei_lesson_show_course_signup_notice.html">sensei_lesson_show_course_signup_notice</a></li><li><a href="sensei_lesson_take_course_url.html">sensei_lesson_take_course_url</a></li><li><a href="sensei_login_url.html">sensei_login_url</a></li><li><a href="sensei_module_course_column_max_links_count.html">sensei_module_course_column_max_links_count</a></li><li><a href="sensei_question_answer_message_correct_answer.html">sensei_question_answer_message_correct_answer</a></li><li><a href="sensei_question_answer_message_css_class.html">sensei_question_answer_message_css_class</a></li><li><a href="sensei_question_answer_message_grade.html">sensei_question_answer_message_grade</a></li><li><a href="sensei_question_answer_message_text.html">sensei_question_answer_message_text</a></li><li><a href="sensei_question_answer_notes.html">sensei_question_answer_notes</a></li><li><a href="sensei_question_image_size.html">sensei_question_image_size</a></li><li><a href="sensei_question_show_answers.html">sensei_question_show_answers</a></li><li><a href="sensei_question_title.html">sensei_question_title</a></li><li><a href="sensei_question_type_specific_properties.html">sensei_question_type_specific_properties</a></li><li><a href="sensei_question_types.html">sensei_question_types</a></li><li><a href="sensei_questions_get_correct_answer.html">sensei_questions_get_correct_answer</a></li><li><a href="sensei_quiz_answer_file_upload_types.html">sensei_quiz_answer_file_upload_types</a></li><li><a href="sensei_quiz_enable_block_based_editor.html">sensei_quiz_enable_block_based_editor</a></li><li><a href="sensei_quiz_ordering_question_type_hide.html">sensei_quiz_ordering_question_type_hide</a></li><li><a href="sensei_quiz_pagination_args.html">sensei_quiz_pagination_args</a></li><li><a href="sensei_quiz_panel_add.html">sensei_quiz_panel_add</a></li><li><a href="sensei_quiz_settings.html">sensei_quiz_settings</a></li><li><a href="sensei_registration_url.html">sensei_registration_url</a></li><li><a href="sensei_reports_overview_export_button_url.html">sensei_reports_overview_export_button_url</a></li><li><a href="sensei_rest_api_lesson_quiz_response.html">sensei_rest_api_lesson_quiz_response</a></li><li><a href="sensei_rest_api_schema_question_type.html">sensei_rest_api_schema_question_type</a></li><li><a href="sensei_rest_api_schema_single_question.html">sensei_rest_api_schema_single_question</a></li><li><a href="sensei_scripts_allowed_pages.html">sensei_scripts_allowed_pages</a></li><li><a href="sensei_scripts_allowed_post_type_pages.html">sensei_scripts_allowed_post_type_pages</a></li><li><a href="sensei_scripts_allowed_post_types.html">sensei_scripts_allowed_post_types</a></li><li><a href="sensei_show_enrolment_debug_button.html">sensei_show_enrolment_debug_button</a></li><li><a href="sensei_show_lesson_numbers.html">sensei_show_lesson_numbers</a></li><li><a href="sensei_student_groups_hide.html">sensei_student_groups_hide</a></li><li><a href="sensei_students_report_last_activity_filter_enabled.html">sensei_students_report_last_activity_filter_enabled</a></li><li><a href="sensei_the_question_number.html">sensei_the_question_number</a></li><li><a href="sensei_tools.html">sensei_tools</a></li><li><a href="sensei_user_courses_filter_options.html">sensei_user_courses_filter_options</a></li><li><a href="sensei_user_courses_query.html">sensei_user_courses_query</a></li></ul>
 </nav>
 
 <br class="clear">
